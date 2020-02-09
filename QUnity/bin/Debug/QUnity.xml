@@ -1,0 +1,233 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>QUnity</name>
+    </assembly>
+    <members>
+        <member name="M:QUnity.Movement.QGradualEllipticalMovement.#ctor(UnityEngine.GameObject,UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
+            <summary>
+            Initializes the elliptical movement as being a 90 degree rotation.
+            </summary>
+            <param name="gameObject"> The gameobject to be moved. </param>
+            <param name="startingPosition"> The starting position. If set to  </param>
+            <param name="finalPosition"></param>
+            <param name="time"></param>
+        </member>
+        <member name="M:QUnity.UI.QUIUtility.FadeDestroy(System.Object,System.Single,System.Single)">
+            <summary>
+            Slowly fades the object and destroys it in the end.
+            </summary>
+            <param name="UIComponent"> The UI component that will be subject to the colour fade. </param>
+            <param name="destructionTime"> The total time in seconds it will take to destroy the object. </param>
+            <param name="fadePoint"> The seconds after which the fading will start </param>
+        </member>
+        <member name="M:QUnity.UI.QUIUtility.FadeDeActivate(System.Object,System.Single,System.Single,System.Boolean)">
+            <summary>
+            Slowly fades the object and then deactivates it.
+            </summary>
+            <param name="image"> The UI component that will be subject to the colour fade. </param>
+            <param name="deActivateTime"> The total time in seconds it will take to deactivate the object. </param>
+            <param name="fadePoint"> The seconds after which the fading will start. </param>
+            <param name="resetColor"> If set to true, the object will be reset to its original transparency after being deactivated. </param>
+        </member>
+        <member name="M:QUnity.UI.QUIUtility.Fade(System.Object,System.Single)">
+            <summary>
+            Slowly fades the object and then deactivates it.
+            </summary>
+            <param name="image"> The UI component that will be subject to the colour fade. </param>
+            <param name="duration"> The total time in seconds it will take to fade the object. </param>
+        </member>
+        <member name="M:QUnity.UI.QUIUtility.ShakeUI(UnityEngine.RectTransform,UnityEngine.Vector2,System.Int32,System.Single)">
+            <summary>
+            Shakes a UI element, first to max and then to min.
+            </summary>
+            <param name="rectTransform"> the rect transform to be shaked </param>
+            <param name="maxDisplacement"> max displacement in all directions </param>
+            <param name="shakeTimes"> the number of times that the shake will happen (once from max to min) </param>
+            <param name="shakeTime"> the total time the shake will take. </param>
+        </member>
+        <member name="M:QUnity.UI.QUIUtility.TranslateUI(UnityEngine.RectTransform,UnityEngine.Vector2)">
+            <summary>
+            Translates the UI element by the given vector
+            </summary>
+        </member>
+        <member name="M:QUnity.UI.QUIUtility.RefreshInputField(TMPro.TMP_InputField)">
+            <summary>
+            Refreshes the input field, for example when it's input type has been changed. Especially useful for passwords.
+            </summary>
+            <param name="field"> The input field to be refreshed. </param>
+        </member>
+        <member name="T:QUnity.Utility.QKeyboardInputHandler">
+            <summary>
+            A class for handling keyboard input
+            </summary>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.SetVolume(System.Single)">
+            <summary>
+            Sets the volume value.
+            </summary>
+            <param name="new_volume"> The volume value, with 0 meaning muted and 1 indicating full volume </param>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.isMusicPlaying">
+            <summary>
+            Checks whether music is currently playing, or whether there is no music to be played or currently the manager is waiting inbetween clips.
+            </summary>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.AddToGroup(System.String,UnityEngine.AudioClip)">
+            <summary>
+            Adds the clip to the given group
+            </summary>
+            <param name="clip"> The clip to be added </param>
+            <returns> True: was added to the group or already existed in the group in the first place, false: the given group does not exist </returns>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.Enqueue(UnityEngine.AudioClip)">
+            <summary>
+            Enqueues the provided music clip.
+            </summary>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.RemoveClip(UnityEngine.AudioClip)">
+            <summary>
+            Removes the clip from all the groups it is to be found in as well as the entirety of the queue.
+            </summary>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.RemoveFromAllGroups(UnityEngine.AudioClip)">
+            <summary>
+            Removes the given clip from all groups.
+            </summary>
+            <returns> Number of groups the item was removed from. </returns>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.RemoveFromGroup(System.String,UnityEngine.AudioClip)">
+            <summary>
+            Removes the clip from the specified group
+            </summary>
+            <returns> True if removed, false if already wasn't in group or the group doesn't exist. </returns>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.RemoveFromQueue(UnityEngine.AudioClip,System.Boolean)">
+            <summary>
+            Removes the clip from the music queue.
+            </summary>
+            <param name="removeOnce"> If true, all instances of the clip will be removed from the queue. If false, only the instance about to be played soonest will be removed. </param>
+            <returns> Number of times the item was removed. </returns>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.RemoveGroup(System.String)">
+            <summary>
+            Removes the group.
+            </summary>
+            <returns> True if the group was successfully removed, false if the group did not exist in the first place </returns>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.GetGroupNames">
+            <summary>
+            Returns all the names of all groups that have been created.
+            </summary>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.GetGroupClips(System.String)">
+            <summary>
+            Returns a copy of all the clips in the specified group. If the group does not exist returns null.
+            </summary>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.CreateGroup(System.String,QUnity.Utility.MusicGroupProperties)">
+            <summary>
+            Creates a group with the given name
+            </summary>
+            <param name="properties"> The properties that define the behaviour of this specific group </param>
+            <returns> True if group was created, false if group already exists. </returns>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.SetActiveGroup(System.String,System.Boolean)">
+            <summary>
+            Sets the active group to this one. If was already active, resets the playing to the start of the group.
+            </summary>
+            <param skipCurrent = "skipCurrent"> Indicates whether the current music being played by another group should be halted and the specified group be immediately played. This, however, does not
+            halt the queued music being played if any clips exist in it. </param>
+            <returns> True if the group exists and was switched to, false if the group does not exist. </returns>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.RestartCurrentMusic">
+            <summary>
+            Restarts the current music that was being played.
+            </summary>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.SetMinWaitTime(System.Single)">
+            <summary>
+            Sets the minimum time in seconds to be waited before the next song is to be played.
+            </summary>
+        </member>
+        <member name="M:QUnity.Utility.QMusicManager.SetMaxWaitTime(System.Single)">
+            <summary>
+            Sets the maximum time in seconds to be waited before the next song is to be played.
+            </summary>
+        </member>
+        <member name="M:QUnity.Utility.MusicGroupProperties.#ctor(System.Boolean,System.Boolean,System.Single,System.Single,System.Single)">
+            <summary>
+            The properties that define the behaviour of a music group when it is being played by the MusicManager class.
+            </summary>
+            <param name="Shuffle"> Whether the clips should be shuffled. Each clip will still only be played once. </param>
+            <param name="Loop"> Whether, when all the clips are done playing, the group should restart. </param>
+            <param name="SpecialVolume"> The volume to which the Audio Source will be set when playing this group. Keep in mind
+            that the Audio Source will switch back to the old volume after the music group is switched from. Also, if you would like to reset the volume
+            you may still use the SetVolume function, which will override the SpecialVolume if used after the group is already activated.
+            Leave this value as -1 if you would like the Audio Source to stay at the default volume/ the value set by the MusicManager. </param>
+            <param name="MinWaitTime"> The minimum amount of time in seconds to be waited before the next song is played. Leave it as -1 if you want the
+            default MusicManager value to be used. </param>
+            <param name="MaxWaitTime"> The maximum amount of time in seconds to be waited before the next song is played. Leave it as -1 if you want the
+            default MusicManager value to be used.</param>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector2WithinMargin(UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
+            <summary>
+            Assesses whether the two vectors are within the provided margin of each other. That is, whether their proximity is within the provided margin.
+            </summary>
+            <param name="v1">First vector provided</param>
+            <param name="v2">Second Vector provided</param>
+            <param name="margin">The margin</param>
+            <returns>true if the two vectors within each other's margin. False if otherwise</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector3WithinMargin(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
+            <summary>
+            Assesses whether the two vectors are within the provided margin of each other. That is, whether their proximity is within the provided margin.
+            </summary>
+            <param name="v1">First vector provided</param>
+            <param name="v2">Second Vector provided</param>
+            <param name="margin">The margin</param>
+            <returns>true if the two vectors within each other's margin. False if otherwise</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector2PassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            Assesses whether the specified vector, defined by a direction and any point on the vector, passess the specified point
+            </summary>
+            <param name="anypoint"> Any point along the vector</param>
+            <param name="direction"> The direction of the vector.</param>
+            <param name="point"> The point being assessed.</param>
+            <returns></returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector2PassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
+            <summary>
+            Assesses whether the specified vector, defined by a direction and any point on the vector, passess the specified point within the margin
+            </summary>
+            <param name="anypoint"> Any point along the vector</param>
+            <param name="direction"> The direction of the vector.</param>
+            <param name="point"> The point being assessed.</param>
+            <param name="margin"> The margin</param>
+            <returns></returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector2RayPassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            Assesses whether the ray passess the given point.
+            </summary>
+            <param name="raystart"> The origin point of the ray.</param>
+            <param name="direction"> The direction the ray follows.</param>
+            <param name="point"> The point being assessed.</param>
+            <returns>True if the ray starts on or passess the specified point.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector2RayPassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
+            <summary>
+            Assesses whether the ray passess the given point within the specified margin.
+            </summary>
+            <param name="raystart"> The origin point of the ray.</param>
+            <param name="direction"> The direction the ray follows.</param>
+            <param name="point"> The point being assessed.</param>
+            <param name="margin"> The margin.</param>
+            <returns>True if the two vectors are within the same margin of each other or the ray itself passess the point within the margin.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector2IsInBetweenTwoAcute(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
+            <returns>true if the given between vector is within the acute angle formed between the first and second vectors.</returns>
+        </member>
+    </members>
+</doc>

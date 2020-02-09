@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>QuestryGameGeneral</name>
+    </assembly>
+    <members>
+        <member name="M:QuestryGameGeneral.Calculations.Comparisons.WithinMargin(System.Single,System.Single,System.Single)">
+            <summary>
+            Returns true if the input floats a or b are within the margin of one another.
+            </summary>
+            <param name="a"> first value</param>
+            <param name="b"> second value</param>
+            <param name="margin"> the margin by which the two values will be compared.</param>
+            <returns></returns>
+        </member>
+        <member name="M:QuestryGameGeneral.Calculations.Operations.IntPower(System.Int32,System.Int32)">
+            <summary>
+            returns a^b for two integers by using Exponentiation by Squaring
+            </summary>
+            <param name="a"> the integer base </param>
+            <param name="b"> the integer exponent </param>
+            <returns> a^b. 0 if too big to be stored in an integer. </returns>
+        </member>
+        <member name="M:QuestryGameGeneral.Calculations.Operations.RoundToSignificantDigits(System.Double,System.Int32)">
+            <summary>
+            Rounds the given value to the specified number of significant figures/digits.
+            </summary>
+            <param name="val"> The value to be rounded </param>
+            <param name="digits"> the number of significant figures </param>
+            <returns> the rounded number </returns>
+        </member>
+        <member name="M:QuestryGameGeneral.Calculations.VariableCalculations.GetIntMinimumBits(System.Int32)">
+            <summary>
+            Gets the number of minimum bits required to represent this integer. Of course, all integers take the same space but a lower integer can be represented by
+            less bits.
+            </summary>
+            <param name="number"> the integer </param>
+            <returns> the bits required to represent said integer. if negative, will return 32 as negative values require the flag. input the absolute value
+            if you wish the minimum bits if the number was not negative to be returned. </returns>
+        </member>
+        <member name="M:QuestryGameGeneral.Converters.DateConverters.ConvertAmericanToSensible(System.String)">
+            <summary>
+            Converts the american date system to the one understood by regular human beings.
+            </summary>
+            <param name="s"> a date of the format "month/day/..." in numerical form</param>
+            <returns>the same date of the format "day/month/..."</returns>
+        </member>
+        <member name="M:QuestryGameGeneral.Converters.ToBinary.IntToBinary(System.Int32)">
+            <summary>
+            Converts an integer into its binary form.
+            </summary>
+            <param name="number"> the number to be converted. </param>
+            <returns> The LSB is represented by index 0. True is for 1 and false is for 0. </returns>
+        </member>
+        <member name="T:QuestryGameGeneral.EventSystems.ActionEvent`1">
+            <summary>
+            A class that contains an event that accepts one attribute
+            </summary>
+        </member>
+        <member name="T:QuestryGameGeneral.EventSystems.EmptyEvent">
+            <summary>
+            This is a class that contains an event that neither returns nor accepts any values.
+            </summary>
+        </member>
+        <member name="M:QuestryGameGeneral.PathFinding.DijkstraMap`1.AddNode(`0,System.Collections.Generic.List{QuestryGameGeneral.PathFinding.DijkstraMap{`0}.NodeLink})">
+            <summary>
+            Adds a node and its connections to the map. O(n) where n= size of connectedTo. Also creates nodes for nodes that are already connected to. If a distance is different then changes distance.
+            </summary>
+            <param name="connectedTo"> Can be left as empty if you want simply the node to be added, and for example, will add the links later.</param>
+        </member>
+        <member name="M:QuestryGameGeneral.PathFinding.DijkstraMap`1.AddNodes(System.Collections.Generic.List{`0},System.Collections.Generic.List{System.Collections.Generic.List{QuestryGameGeneral.PathFinding.DijkstraMap{`0}.NodeLink}})">
+            <summary>
+            A node Object and its list of connections have to be the same index in both lists input. 
+            </summary>
+        </member>
+        <member name="M:QuestryGameGeneral.PathFinding.DijkstraMap`1.RemoveNode(`0)">
+            <summary>
+            Removes the node, along with the connections that it harbored.
+            </summary>
+        </member>
+        <member name="M:QuestryGameGeneral.PathFinding.DijkstraMap`1.AddModifyNodeLink(`0,`0,System.Single,System.Boolean)">
+            <summary>
+            Adds a link from a node to another or resets distance. If such a link already exists at the same distance or one of the nodes do not exist in the map the operation will fail and will return false.
+            if the isModification variable is set to true without being sure that the two nodes exist and already have a connection between them, this will produce an error. 
+            </summary>
+        </member>
+        <member name="M:QuestryGameGeneral.PathFinding.DijkstraMap`1.RemoveNodeLink(`0,`0)">
+            <summary>
+            removes the link between the two specified nodes. if the nodes do not exist returns false, otherwise returns true, even if the connection did not exist in the first place.
+            </summary>
+        </member>
+        <member name="M:QuestryGameGeneral.PathFinding.DijkstraMap`1.FindPath(`0,`0)">
+            <summary>
+            if one of the two input objects are not in the map or there is no valid path, will return a null path. Otherwise, will return a path that starts from the first destination to the end goal.
+            </summary>
+        </member>
+        <member name="T:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor">
+            <summary>
+            Executes a given function for every specified interval, unless the time given for one of the functions is not perfectly divided in which scenario the 
+            function will be once executed with the remainder. Especially useful for time-sensitive functions. The difference between the precise executor type
+            is that this one will not be delayed in starting, meaning that the first execution will happen much faster than the ideal execution interval time, and that
+            it is no considered erronous for the executions to happen faster than the ideal time (of course the proper time passed will be input)
+            </summary>
+        </member>
+        <member name="T:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.Operation">
+            <summary>
+            The type used for the Assigner and Disconnectors.
+            </summary>
+        </member>
+        <member name="T:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.Execution">
+            <summary>
+            The type used for Exeuction.
+            </summary>
+            <param name="time"> Time in milliseconds that has passed since last execution. </param>
+        </member>
+        <member name="T:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.ErrorHandler">
+            <summary>
+            The optional type called for when the kernel calls the thread of this object too late for the execution to be called within margin. This function will
+            be called before the execution takes place.
+            </summary>
+            <param name="assigner"> The assigner function used </param>
+            <param name="disconnector"> The disconnector function used </param>
+            <param name="executor"> The executor function used. </param>
+            <param name="time_left"> The time left to be executed before all the intervals of execution were finished. This does not include the current interval.
+            </param>
+            <param name="current_interval"> The current interval of time before execution was stopped. This does not include the time elapsed after this function 
+            is called. </param>
+            <returns> Whether the thread should continue as normal to execute. </returns>
+        </member>
+        <member name="M:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.#ctor(System.Int32,System.Boolean,System.Threading.ThreadPriority,System.Boolean)">
+            <summary>
+            Instantiates an Interval Executor. 
+            </summary>
+            <param name="interval"> The interval of time in milliseconds that is waited before the executions will be executed (ideally). </param>     
+            <param name="execution_time_included"> Whether the execution time of the execution is to be included in the interval waited between executions. </param>
+            <param name="tpriority"> The priority at which the thread enumerating through the entries should be set. </param>
+            <param name="reset_queued"> True for when the timers should only be started when the whole object is started through StartExecution(), 
+            or false for immediately when the execution is added through AddEntry(). The associator, if defined, will also be called right before when the timer starts. </param>
+        </member>
+        <member name="M:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.#ctor(System.Int32,System.Boolean,System.Threading.ThreadPriority,System.Boolean,System.Int32,QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.ErrorHandler)">
+            <summary>
+            Instantiates an Interval Executor. 
+            </summary>
+            <param name="interval"> The interval of time in milliseconds the executions will be executed (ideally). </param>
+            <param name="margin"> The margin of error as to how late the methods may be executed. </param>
+            <param name="handler"> A custom function to be executed when the error is above the margin. </param>            
+            <param name="execution_time_included"> Whether the execution time of the execution is to be included in the interval waited between executions. </param>
+            <param name="tpriority"> The priority at which the thread enumerating through the entries should be set. </param>
+            <param name="reset_queued"> True for when the timers should only be started when the whole object is started through StartExecution(), 
+            or false for immediately when the execution is added through AddEntry(). The associator, if defined, will also be called right before when the timer starts. </param>
+        </member>
+        <member name="M:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.StartExecution">
+            <summary>
+            Starts the execution of the entries.
+            </summary>
+        </member>
+        <member name="M:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.StopExecution(System.Boolean)">
+            <summary>
+            Stops the execution of the entries. If in the middle of an execution, waits for it to end.
+            </summary>
+            <param name="ImmediateSuspend"> UNSAFE. Ends the execution thread(s) immediately. This might corrupt data or lead to unpredictable behaviour. 
+            Use at your own risk. </param>
+        </member>
+        <member name="M:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.AddEntry(QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.Execution,System.Int64)">
+            <summary>
+            Adds an execution to be run in specified intervals.
+            </summary>
+            <param name="exec"> The execution. Must take integer value that represents the amount of time that has passed. </param>
+            <param name="execution_time"> The amount of total time it is to be executed before it is released. negative if you wish it to never be released. </param>
+            <returns> The unique ID representing this execution. Store it if you would like to access the execution later on. </returns>
+        </member>
+        <member name="M:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.AddEntry(QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.Execution,QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.Operation,System.Int64)">
+            <summary>
+            Adds an execution to be run in specified intervals.
+            </summary>
+            <param name="exec"> The execution. Must take integer value that represents the amount of time that has passed. </param>
+            <param name="disassociator"> The disassociator. Executed once when the execution's last execution is executed. </param>
+            <param name="execution_time"> The amount of total time it is to be executed before it is released. negative if you wish it to never be released. This will
+            override any disassociator input. </param>
+            <returns> The unique ID representing this execution. Store it if you would like to access the execution later on. </returns>
+        </member>
+        <member name="M:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.AddEntry(QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.Operation,QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.Execution,QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.Operation,System.Int64)">
+            <summary>
+            Adds an execution to be run in specified intervals.
+            </summary>
+            <param name="associator"> The associator. Run in accordance with the ResetQueued Property set when this object was constructed. 
+            The associators of a single object should not differ too much in workload, as otherwise there might be some large deviations in the start
+            times of the different executions.</param>
+            <param name="exec"> The execution. Must take integer value that represents the amount of time that has passed. </param>
+            <param name="disassociator"> The disassociator. Executed once when the execution's last execution is executed. </param>
+            <param name="execution_time"> The amount of total time it is to be executed before it is released. negative if you wish it to never be released. This will
+            override any disassociator input. </param>
+            <returns> The unique ID representing this execution. Store it if you would like to access the execution later on. </returns>
+        </member>
+        <member name="M:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.RemoveEntry(System.Int32,System.Boolean)">
+            <summary>
+            Removes an execution entry based on its ID. If an entry is about to be run the entry may not be removed first.
+            </summary>
+            <param name="EntryID"> ID of execution to be removed. </param>
+            <param name="CallDisAssociator"> Whether the disassociator function should be called. ıf none assigned at the start, this is meaningless. </param>
+            <returns> Whether the entry was existant or not. </returns>
+        </member>
+        <member name="M:QuestryGameGeneral.TimedExecutors.ImpreciseIntervalExecutor.GetExecutionTotalTimeLeft(System.Int32)">
+            <summary>
+            Returns the total milliseconds of time the specified execution has before it is removed. Meaningless 
+            for indefinite executions, as these get immediately revived after they "run out" of time.
+            </summary>
+            <param name="ExecutionID"> The Unique ID that identifies this execution. </param>
+            <returns> The total milliseconds of time the specified execution has before it is removed. returns long.MinValue if wrong ID is supplied </returns>
+        </member>
+    </members>
+</doc>
