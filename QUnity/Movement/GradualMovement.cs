@@ -99,6 +99,7 @@ namespace QUnity.Movement
             }
         }
 
+
         #endregion
 
         #region Manager Properties
@@ -529,22 +530,44 @@ namespace QUnity.Movement
         /// Removes the gameobject from the gradual movement manager, ending all movements and enqueued movements.
         /// </summary>
         /// <param name="g"> the gameobject whose movements are supposed to be removed. </param>
-        public static void RemoveGradualMovement(GameObject g)
+        /// <returns> true if the object was removed, false if it didn't exist in the system in the first place. </returns>
+        public static bool RemoveGradualMovement(GameObject g)
         {
+            if (!gradualMovements.ContainsKey(g))
+                return false;
+            foreach(QGradualMovement qgm in gradualMovements[g])
+            {
+                qgm.OnMovementFinish(true);
+            }
+            foreach (QGradualMovement qgm in currentGradualMovements[g].movements)
+            {
+                qgm.OnMovementFinish(true);
+            }
             gradualMovements.Remove(g);
             currentGradualMovements.Remove(g);
-            //TODO Check for the consequences of removal
+            return true;
         }
 
         /// <summary>
         /// Removes the rigidbody from the gradual movement manager, ending all movements and enqueued movements.
         /// </summary>
         /// <param name="rb"> the rigidbody whose movements are supposed to be removed. </param>
-        public static void RemoveGradualMovement(Rigidbody rb)
+        /// <returns> true if the object was removed, false if it didn't exist in the system in the first place. </returns>
+        public static bool RemoveGradualMovement(Rigidbody rb)
         {
+            if (!rigidGradualMovements.ContainsKey(rb))
+                return false;
+            foreach (QGradualMovement qgm in rigidGradualMovements[rb])
+            {
+                qgm.OnMovementFinish(true);
+            }
+            foreach (QGradualMovement qgm in currentRigidGradualMovements[rb].movements)
+            {
+                qgm.OnMovementFinish(true);
+            }
             rigidGradualMovements.Remove(rb);
             currentRigidGradualMovements.Remove(rb);
-            //TODO Check for the consequences of removal
+            return true;
         }
 
         /// <summary>
@@ -635,7 +658,8 @@ public class QGradualMovement
     /// <summary>
     /// The function called by the manager when the movement has finished and been removed from the current movements of the assigned rigidbody/gameobject.
     /// </summary>
-    public virtual void OnMovementFinish()
+    /// <param name="premature"> this will be true if the movement was marked as finished before the movement was completed, such as when the object is removed from movement. </param>
+    public virtual void OnMovementFinish(bool premature)
     {
 
     }
