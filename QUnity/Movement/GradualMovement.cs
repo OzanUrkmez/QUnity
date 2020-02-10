@@ -81,6 +81,9 @@ namespace QUnity.Movement
 
                 foreach(GameObject g in currentGradualMovements.Keys)
                 {
+                    AggregateGradualMovement mov = currentGradualMovements[g];
+                    if (mov.paused)
+                        continue;
                     
                 }
 
@@ -167,7 +170,6 @@ namespace QUnity.Movement
         private class AggregateGradualMovement
         {
             public List<QGradualMovement> movements;
-            public int initialMovementsGottenFromQueue;
             public bool paused;
             public int aggregateNonStacked = 0;
             public QGradualMovement currentStaticMovement = null;
@@ -175,7 +177,6 @@ namespace QUnity.Movement
             public AggregateGradualMovement()
             {
                 movements = new List<QGradualMovement>();
-                initialMovementsGottenFromQueue = 0;
                 paused = false;
                 currentStaticMovement = null;
                 aggregateNonStacked = 0;
@@ -222,8 +223,6 @@ namespace QUnity.Movement
                 //did not exist before. REMEMBER TO DELETE A MOVEMENT IF IT HAS NO MORE WITHIN THE QUEUE. THERE MUST ALWAYS BE A CURRENT MOVEMENT FOR A MOVEMENT. 
                 gradualMovements.Add(g, new Queue<QGradualMovement>());
                 currentGradualMovements.Add(g, new AggregateGradualMovement());
-                gradualMovements[g].Enqueue(movement);
-                currentGradualMovements[g].initialMovementsGottenFromQueue = 1;
                 currentGradualMovements[g].movements.Add(movement);
                 if (!movement.IsStacked())
                 {
@@ -365,8 +364,6 @@ namespace QUnity.Movement
                 //did not exist before. REMEMBER TO DELETE A MOVEMENT IF IT HAS NO MORE WITHIN THE QUEUE. THERE MUST ALWAYS BE A CURRENT MOVEMENT FOR A MOVEMENT. 
                 rigidGradualMovements.Add(rb, new Queue<QGradualMovement>());
                 currentRigidGradualMovements.Add(rb, new AggregateGradualMovement());
-                rigidGradualMovements[rb].Enqueue(movement);
-                currentRigidGradualMovements[rb].initialMovementsGottenFromQueue = 1;
                 currentRigidGradualMovements[rb].movements.Add(movement);
                 if (!movement.IsStacked())
                 {
@@ -536,6 +533,7 @@ namespace QUnity.Movement
         {
             gradualMovements.Remove(g);
             currentGradualMovements.Remove(g);
+            //TODO Check for the consequences of removal
         }
 
         /// <summary>
@@ -546,6 +544,7 @@ namespace QUnity.Movement
         {
             rigidGradualMovements.Remove(rb);
             currentRigidGradualMovements.Remove(rb);
+            //TODO Check for the consequences of removal
         }
 
         /// <summary>
