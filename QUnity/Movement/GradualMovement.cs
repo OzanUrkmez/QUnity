@@ -357,7 +357,8 @@ namespace QUnity.Movement
         /// <param name="rb"> the rigidbody to be moved. </param>
         /// <param name="movement"> the well-defined gradual movement </param>
         /// <param name="stackWithCurrent"> if this is true and the passed movement is a stacking one, stacks the movement with the current movements being executed for the gameobject. If all movements added so far to the object is already stacked, this boolean will not matter. </param>
-        public static void AddGradualMovement(Rigidbody rb, QGradualMovement movement, bool stackWithCurrent = false)
+        /// <param name="attemptMerge"> attempts to merge this movement with other ones for the object. Stacking and non-stacking movements will never be merged. Keep in mind that when this is checked, though it may potentially increase efficiency for the future, can also produce a process-intensive function-call. </param>
+        public static void AddGradualMovement(Rigidbody rb, QGradualMovement movement, bool stackWithCurrent = false, bool attemptMerge = false)
         {
             if (!rigidGradualMovements.ContainsKey(rb))
             {
@@ -375,38 +376,120 @@ namespace QUnity.Movement
             }
             else
             {
+                //did exist before.
+
                 if (currentRigidGradualMovements[rb].aggregateNonStacked != 0)
                 {
-                    //did exist before. 
                     if (movement.IsStacked())
                     {
                         //the movement is one that stacks.
                         if (stackWithCurrent)
                         {
+                            //attempt to merge the current input movement with one of the current ones. 
+                            if (attemptMerge)
+                            {
+                                bool merged = false;
+                                foreach (QGradualMovement mov in currentRigidGradualMovements[rb].movements)
+                                {
+                                    if (mov.IsStacked() && mov.AttemptMerge(movement))
+                                    {
+                                        merged = true;
+                                        break;
+                                    }
+                                }
+                                if (merged)
+                                {
+                                    return;
+                                }
+                            }
                             currentRigidGradualMovements[rb].movements.Add(movement);
                         }
                         else
                         {
+                            //attempt to merge the current input movement with one of the stacked ones that are enqueued within the latest group. 
+                            if (attemptMerge)
+                            {
+                                bool merged = false;
+                                QGradualMovement[] traversedMovements = rigidGradualMovements[rb].ToArray();
+                                for (int i = traversedMovements.Length - 1; i > -1; i++)
+                                {
+
+                                    if (!traversedMovements[i].IsStacked())
+                                        break;
+                                    else if (traversedMovements[i].AttemptMerge(movement))
+                                    {
+                                        merged = true;
+                                        break;
+                                    }
+                                }
+                                if (merged)
+                                {
+                                    return;
+                                }
+                            }
+                            //otherwise add it to the queue.
                             rigidGradualMovements[rb].Enqueue(movement);
                         }
                     }
                     else
                     {
-                        //add it to the queue.
+                        //attempt to merge the current input movement with one of the stacked ones that are enqueued within the latest group. 
+                        if (attemptMerge)
+                        {
+                            bool merged = false;
+                            QGradualMovement[] traversedMovements = rigidGradualMovements[rb].ToArray();
+                            for (int i = traversedMovements.Length - 1; i > -1; i++)
+                            {
+
+                                if (traversedMovements[i].IsStacked())
+                                    continue;
+                                else if (traversedMovements[i].AttemptMerge(movement))
+                                {
+                                    merged = true;
+                                }
+                                break;
+                            }
+                            if (merged)
+                            {
+                                return;
+                            }
+                        }
+                        //otherwise add it to the queue.
+
                         rigidGradualMovements[rb].Enqueue(movement);
                         currentRigidGradualMovements[rb].aggregateNonStacked++;
                     }
                 }
                 else
                 {
-
                     //special case in which everything is stacked up to now.
-                    currentRigidGradualMovements[rb].movements.Add(movement);
                     if (!movement.IsStacked())
                     {
+                        //wont check for merging as is the only non-stacked.
                         currentRigidGradualMovements[rb].aggregateNonStacked++;
                         currentRigidGradualMovements[rb].currentStaticMovement = movement;
                     }
+                    else
+                    {
+                        //attempt to merge the current input movement with one of the current ones. 
+                        if (attemptMerge)
+                        {
+                            bool merged = false;
+                            foreach (QGradualMovement mov in currentRigidGradualMovements[rb].movements)
+                            {
+                                if (mov.AttemptMerge(movement))
+                                {
+                                    merged = true;
+                                    break;
+                                }
+                            }
+                            if (merged)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                    currentRigidGradualMovements[rb].movements.Add(movement);
                 }
             }
         }
