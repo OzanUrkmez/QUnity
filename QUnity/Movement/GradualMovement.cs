@@ -263,13 +263,17 @@ namespace QUnity.Movement
                         }
                         else
                         {
+                            //attempt to merge the current input movement with one of the stacked ones that are enqueued within the latest group. 
                             if (attemptMerge)
                             {
                                 bool merged = false;
                                 QGradualMovement[] traversedMovements = gradualMovements[g].ToArray();
                                 for (int i = traversedMovements.Length - 1; i > -1; i++)
                                 {
-                                    if (mov.IsStacked() && mov.AttemptMerge(movement))
+
+                                    if (!traversedMovements[i].IsStacked())
+                                        break;
+                                    else if (traversedMovements[i].AttemptMerge(movement))
                                     {
                                         merged = true;
                                         break;
@@ -280,12 +284,35 @@ namespace QUnity.Movement
                                     return;
                                 }
                             }
+                            //otherwise add it to the queue.
                             gradualMovements[g].Enqueue(movement);
                         }
                     }
                     else
                     {
-                        //add it to the queue.
+                        //attempt to merge the current input movement with one of the stacked ones that are enqueued within the latest group. 
+                        if (attemptMerge)
+                        {
+                            bool merged = false;
+                            QGradualMovement[] traversedMovements = gradualMovements[g].ToArray();
+                            for (int i = traversedMovements.Length - 1; i > -1; i++)
+                            {
+
+                                if (traversedMovements[i].IsStacked())
+                                    continue;
+                                else if(traversedMovements[i].AttemptMerge(movement))
+                                {
+                                    merged = true;
+                                }
+                                break;
+                            }
+                            if (merged)
+                            {
+                                return;
+                            }
+                        }
+                        //otherwise add it to the queue.
+                        
                         gradualMovements[g].Enqueue(movement);
                         currentGradualMovements[g].aggregateNonStacked++;
                     }
@@ -295,6 +322,7 @@ namespace QUnity.Movement
                     //special case in which everything is stacked up to now.
                     if (!movement.IsStacked())
                     {
+                        //wont check for merging as is the only non-stacked.
                         currentGradualMovements[g].aggregateNonStacked++;
                         currentGradualMovements[g].currentStaticMovement = movement;
                     }
@@ -534,7 +562,7 @@ public class QGradualMovement
     /// Attempts to merge the input movement into this current movement. These are often implemented such that similar types of movement, and especially linear ones over similar times, can be handled as a single movement instead to increase performance.
     /// </summary>
     /// <param name="mov"> The movement to be merged. </param>
-    /// <returns> whether the input movement has been integrated into this movement. If true, this class is now responsible for adding the displacement of the other movement into itself. </returns>
+    /// <returns> whether the input movement has been integrated into this movement. If true, this class is now responsible for adding the displacement of the other movement into itself. If false, the movement that has been attempted to be merged will be queued normally.</returns>
     public virtual bool AttemptMerge(QGradualMovement mov)
     {
         return false;
