@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace QUnity.Movement
 {
@@ -27,6 +28,9 @@ namespace QUnity.Movement
             }
             singleton = this;
             currentProperties = defaultProperties;
+            if (currentProperties.dontDestroyOnLoad)
+                DontDestroyOnLoad(gameObject);
+            SceneManager.activeSceneChanged += OnSceneChanged;
             EnableMovementEnumeration();
         }
 
@@ -43,8 +47,13 @@ namespace QUnity.Movement
             }
         }
 
-
-
+        private void OnSceneChanged(Scene oldScene, Scene newScene)
+        {
+            gradualMovements = new Dictionary<GameObject, Queue<QIGradualMovement>>();
+            rigidGradualMovements = new Dictionary<Rigidbody, Queue<QIGradualMovement>>();
+            currentGradualMovements = new Dictionary<GameObject, AggregateGradualMovement>();
+            currentRigidGradualMovements = new Dictionary<Rigidbody, AggregateGradualMovement>();
+        }
 
         #endregion
 
@@ -165,7 +174,10 @@ namespace QUnity.Movement
                         currentAggregateTransformation += trans;
                     }
                     //do the transformation
-                    rb.MovePosition(rb.transform.position  + currentAggregateTransformation);
+                    if (currentProperties.useRigidBodyMovement)
+                        rb.MovePosition(rb.transform.position + currentAggregateTransformation);
+                    else
+                        rb.position = rb.transform.position + currentAggregateTransformation;
                     foreach (QIGradualMovement qmov in toBeRemoved)
                     {
                         if (!mov.movements.Contains(qmov))
@@ -258,7 +270,21 @@ namespace QUnity.Movement
         /// <param name="newProperties"> the new properties struct </param>
         public static void ChangeProperties(QGradualMovementProperties newProperties)
         {
+            HandlePropertiesChange(singleton.currentProperties, newProperties);
             singleton.currentProperties = newProperties;
+        }
+
+        private static void HandlePropertiesChange(QGradualMovementProperties oldProperties, QGradualMovementProperties newProperties)
+        {
+            if(!oldProperties.dontDestroyOnLoad && newProperties.dontDestroyOnLoad)
+            {
+                //change to dont destroy on load.
+                DontDestroyOnLoad(singleton);
+            }else if(oldProperties.dontDestroyOnLoad && !newProperties.dontDestroyOnLoad)
+            {
+                //change to DO destroy on load.
+                SceneManager.MoveGameObjectToScene(singleton.gameObject, SceneManager.GetActiveScene());
+            }
         }
 
         #endregion
@@ -774,7 +800,7 @@ public interface QIGradualMovement
     /// <returns>true for stacked, false for not stacked.</returns>
     bool IsStacked();
     /// <summary>
-    /// The function called by the manager when the movement has finished and been removed from the current movements of the assigned rigidbody/gameobject.
+    /// The function called by the manager when the movement has finished and been removed from the current movements of the assigned rigidbody/gameobject. The function will not be called when changing scenes, though the movements and their objects will nonetheless be removed.
     /// </summary>
     /// <param name="premature"> this will be true if the movement was marked as finished before the movement was completed, such as when the object is removed from movement. </param>
     void OnMovementFinish(bool premature);
