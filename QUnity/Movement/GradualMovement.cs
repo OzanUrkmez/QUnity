@@ -71,7 +71,9 @@ namespace QUnity.Movement
         {
             singleton.enumerationActive = true;
         }
-
+        List<QIGradualMovement> toBeRemoved = new List<QIGradualMovement>();
+        List<GameObject> objectsToBeRemoved = new List<GameObject>();
+        List<Rigidbody> rigidbodiesToBeRemoved = new List<Rigidbody>();
         private IEnumerator MovementEnumeration()
         {
             while (enumerationActive)
@@ -89,8 +91,11 @@ namespace QUnity.Movement
                     time = Time.deltaTime;
                 }
                 //code goes here.
-                Vector3 currentAggregateTransformation = Vector3.zero;
-                List<QIGradualMovement> toBeRemoved = new List<QIGradualMovement>();
+                Vector3 currentAggregateTransformation;
+                toBeRemoved.Clear();
+                objectsToBeRemoved.Clear();
+                rigidbodiesToBeRemoved.Clear();
+                //handle regular
                 foreach (GameObject g in currentGradualMovements.Keys)
                 {
                     AggregateGradualMovement mov = currentGradualMovements[g];
@@ -132,7 +137,63 @@ namespace QUnity.Movement
                     if(mov.movements.Count == 0)
                     {
                         //movement of this object has completely finished.
+                        objectsToBeRemoved.Add(g);
                     }
+                }
+                foreach(GameObject g in objectsToBeRemoved)
+                {
+                    gradualMovements.Remove(g);
+                    currentGradualMovements.Remove(g);
+                }
+                //handle rigid
+                foreach (Rigidbody rb in currentRigidGradualMovements.Keys)
+                {
+                    AggregateGradualMovement mov = currentRigidGradualMovements[rb];
+                    if (mov.paused)
+                        continue;
+                    currentAggregateTransformation = Vector3.zero;
+                    toBeRemoved.Clear();
+                    foreach (QIGradualMovement qmov in mov.movements)
+                    {
+                        Vector3 trans = qmov.GetTransformation(time);
+                        if (trans == Vector3.negativeInfinity)
+                        {
+                            //the movement is done! remove it handle logic and then continue.
+                            toBeRemoved.Add(qmov);
+                            continue;
+                        }
+                        currentAggregateTransformation += trans;
+                    }
+                    //do the transformation
+                    rb.MovePosition(rb.transform.position  + currentAggregateTransformation);
+                    foreach (QIGradualMovement qmov in toBeRemoved)
+                    {
+                        if (!mov.movements.Contains(qmov))
+                            continue;
+                        if (qmov.IsStacked())
+                        {
+                            //just a stacked movement that has finished.
+                            qmov.OnMovementFinish(false);
+                            mov.movements.Remove(qmov);
+                        }
+                        else
+                        {
+                            //the non stacked movement has finished!
+                            qmov.OnMovementFinish(false);
+                            mov.RemoveStaticMovement();
+                            OnCurrentRigidMovementEnd(rb);
+                        }
+                    }
+                    if (mov.movements.Count == 0)
+                    {
+                        //movement of this object has completely finished.
+                        rigidbodiesToBeRemoved.Add(rb);
+                    }
+                }
+                foreach (Rigidbody rb in rigidbodiesToBeRemoved)
+                {
+                    rigidGradualMovements.Remove(rb);
+                    currentRigidGradualMovements.Remove(rb);
                 }
             }
         }
