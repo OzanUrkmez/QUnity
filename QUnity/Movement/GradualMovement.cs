@@ -76,25 +76,57 @@ namespace QUnity.Movement
         {
             while (enumerationActive)
             {
-                //code goes here.
-                Vector2 currentAggregateTransformation; 
-
-                foreach(GameObject g in currentGradualMovements.Keys)
-                {
-                    AggregateGradualMovement mov = currentGradualMovements[g];
-                    if (mov.paused)
-                        continue;
-                    mov.
-                }
-
+                float time = 0f;
                 //waiting happens here.
                 if (currentProperties.useFixedUpdate)
                 {
                     yield return new WaitForFixedUpdate();
+                    time = Time.fixedDeltaTime;
                 }
                 else
                 {
                     yield return new WaitForEndOfFrame();
+                    time = Time.deltaTime;
+                }
+                //code goes here.
+                Vector3 currentAggregateTransformation = Vector3.zero;
+                List<QIGradualMovement> toBeRemoved = new List<QIGradualMovement>();
+                foreach (GameObject g in currentGradualMovements.Keys)
+                {
+                    AggregateGradualMovement mov = currentGradualMovements[g];
+                    if (mov.paused)
+                        continue;
+                    currentAggregateTransformation = Vector3.zero;
+                    toBeRemoved.Clear();
+                    foreach (QIGradualMovement qmov in mov.movements)
+                    {
+                        Vector3 trans = qmov.GetTransformation(time);
+                        if(trans == Vector3.negativeInfinity)
+                        {
+                            //the movement is done! remove it handle logic and then continue.
+                            toBeRemoved.Add(qmov);
+                            continue;
+                        }
+                        currentAggregateTransformation += trans;
+                    }
+                    //do the transformation
+                    g.transform.Translate(currentAggregateTransformation);
+                    foreach (QIGradualMovement qmov in toBeRemoved)
+                    {
+                        if (!mov.movements.Contains(qmov))
+                            continue;
+                        if(qmov.IsStacked())
+                        {
+                            //just a stacked movement that has finished.
+                            mov.movements.Remove(qmov);
+                        }
+                        else
+                        {
+                            //the non stacked movement has finished!
+                            mov.RemoveStaticMovement();
+                            OnCurrentMovementEnd(g);
+                        }
+                    }
                 }
             }
         }
@@ -182,6 +214,15 @@ namespace QUnity.Movement
                 currentStaticMovement = null;
                 aggregateNonStacked = 0;
             }
+
+            public void RemoveStaticMovement()
+            {
+                if (currentStaticMovement == null)
+                    return;
+                movements.Remove(currentStaticMovement);
+                currentStaticMovement = null;
+                aggregateNonStacked--;
+            }
         }
 
         private static Dictionary<GameObject, Queue<QIGradualMovement>> gradualMovements = new Dictionary<GameObject, Queue<QIGradualMovement>>();
@@ -196,14 +237,12 @@ namespace QUnity.Movement
 
         private static void OnCurrentMovementEnd(GameObject g)
         {
-            if (currentGradualMovements[g].aggregateNonStacked != 0)
-                currentGradualMovements[g].aggregateNonStacked--;
+            AggregateGradualMovement aggr = currentGradualMovements[g];
         }
 
         private static void OnCurrentRigidMovementEnd(Rigidbody rb)
         {
-            if (currentRigidGradualMovements[rb].aggregateNonStacked != 0)
-                currentRigidGradualMovements[rb].aggregateNonStacked--;
+
         }
 
         #endregion
@@ -579,6 +618,7 @@ namespace QUnity.Movement
         {
             if (!currentGradualMovements.ContainsKey(g))
                 return;
+            currentGradualMovements[g].RemoveStaticMovement();
             if (removeStacked)
                 currentGradualMovements[g].movements.Clear();
             OnCurrentMovementEnd(g);
@@ -593,6 +633,7 @@ namespace QUnity.Movement
         {
             if (!currentRigidGradualMovements.ContainsKey(rb))
                 return;
+            currentRigidGradualMovements[rb].RemoveStaticMovement();
             if (removeStacked)
                 currentRigidGradualMovements[rb].movements.Clear();
             OnCurrentRigidMovementEnd(rb);
