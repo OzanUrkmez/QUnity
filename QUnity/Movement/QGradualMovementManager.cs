@@ -753,34 +753,6 @@ namespace QUnity.Movement
         #endregion
     }
 
-    //event systems etc as well. speed coefficient marks.
-    public class QGradualEllipticalMovement
-    {
-
-        private Vector3 initial, final, circularPivot;
-        private float xCoeff, yCoeff;
-        private float movementTime;
-        private GameObject movedObject;
-
-        /// <summary>
-        /// Initializes the elliptical movement as being a 90 degree rotation.
-        /// </summary>
-        /// <param name="gameObject"> The gameobject to be moved. </param>
-        /// <param name="startingPosition"> The starting position. If set to  </param>
-        /// <param name="finalPosition"></param>
-        /// <param name="time"></param>
-        public QGradualEllipticalMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, float time)
-        {
-
-        }
-
-        #region Getters
-
-        #endregion
-
-    }
-
-    //TODO implement other types of movement
 
 
 }
