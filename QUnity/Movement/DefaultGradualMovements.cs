@@ -8,6 +8,9 @@ using UnityEngine;
 namespace QUnity.Movement
 {
         //event systems etc as well. speed coefficient marks.
+    /// <summary>
+    /// Defines an elliptical gradual movement integrated into the Questry Gradual Movement System. 
+    /// </summary>
     public class QGradualEllipticalMovement : QIGradualMovement
     {
 
