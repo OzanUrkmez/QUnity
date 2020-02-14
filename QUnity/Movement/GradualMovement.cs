@@ -305,11 +305,35 @@ namespace QUnity.Movement
         private static void OnCurrentMovementEnd(GameObject g)
         {
             AggregateGradualMovement aggr = currentGradualMovements[g];
+            Queue<QIGradualMovement> queue = gradualMovements[g];
+            QIGradualMovement mov;
+            while (queue.Count > 0)
+            {
+                mov = queue.Dequeue();
+                aggr.movements.Add(mov);
+                if (!mov.IsStacked())
+                {
+                    aggr.currentStaticMovement = mov;
+                    break;
+                }
+            }
         }
 
         private static void OnCurrentRigidMovementEnd(Rigidbody rb)
         {
-
+            AggregateGradualMovement aggr = currentRigidGradualMovements[rb];
+            Queue<QIGradualMovement> queue = rigidGradualMovements[rb];
+            QIGradualMovement mov;
+            while (queue.Count > 0)
+            {
+                mov = queue.Dequeue();
+                aggr.movements.Add(mov);
+                if (!mov.IsStacked())
+                {
+                    aggr.currentStaticMovement = mov;
+                    break;
+                }
+            }
         }
 
         #endregion
