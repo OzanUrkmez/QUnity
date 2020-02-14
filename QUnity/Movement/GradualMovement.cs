@@ -35,8 +35,8 @@ namespace QUnity.Movement
             if (singleton == this)
             {
                 DisableMovementEnumeration();
-                gradualMovements = new Dictionary<GameObject, Queue<QGradualMovement>>();
-                rigidGradualMovements = new Dictionary<Rigidbody, Queue<QGradualMovement>>();
+                gradualMovements = new Dictionary<GameObject, Queue<QIGradualMovement>>();
+                rigidGradualMovements = new Dictionary<Rigidbody, Queue<QIGradualMovement>>();
                 currentGradualMovements = new Dictionary<GameObject, AggregateGradualMovement>();
                 currentRigidGradualMovements = new Dictionary<Rigidbody, AggregateGradualMovement>();
                 singleton = null;
@@ -170,22 +170,22 @@ namespace QUnity.Movement
 
         private class AggregateGradualMovement
         {
-            public List<QGradualMovement> movements;
+            public List<QIGradualMovement> movements;
             public bool paused;
             public int aggregateNonStacked = 0;
-            public QGradualMovement currentStaticMovement = null;
+            public QIGradualMovement currentStaticMovement = null;
 
             public AggregateGradualMovement()
             {
-                movements = new List<QGradualMovement>();
+                movements = new List<QIGradualMovement>();
                 paused = false;
                 currentStaticMovement = null;
                 aggregateNonStacked = 0;
             }
         }
 
-        private static Dictionary<GameObject, Queue<QGradualMovement>> gradualMovements = new Dictionary<GameObject, Queue<QGradualMovement>>();
-        private static Dictionary<Rigidbody, Queue<QGradualMovement>> rigidGradualMovements = new Dictionary<Rigidbody, Queue<QGradualMovement>>();
+        private static Dictionary<GameObject, Queue<QIGradualMovement>> gradualMovements = new Dictionary<GameObject, Queue<QIGradualMovement>>();
+        private static Dictionary<Rigidbody, Queue<QIGradualMovement>> rigidGradualMovements = new Dictionary<Rigidbody, Queue<QIGradualMovement>>();
 
         private static Dictionary<GameObject, AggregateGradualMovement> currentGradualMovements = new Dictionary<GameObject, AggregateGradualMovement>();
         private static Dictionary<Rigidbody, AggregateGradualMovement> currentRigidGradualMovements = new Dictionary<Rigidbody, AggregateGradualMovement>();
@@ -217,12 +217,12 @@ namespace QUnity.Movement
         /// <param name="movement"> the well-defined gradual movement </param>
         /// <param name="stackWithCurrent"> if this is true and the passed movement is a stacking one, stacks the movement with the current movements being executed for the gameobject. If all movements added so far to the object is already stacked, this boolean will not matter.</param>
         /// <param name="attemptMerge"> attempts to merge this movement with other ones for the object. Stacking and non-stacking movements will never be merged. Keep in mind that when this is checked, though it may potentially increase efficiency for the future, can also produce a process-intensive function-call. </param>
-        public static void AddGradualMovement(GameObject g, QGradualMovement movement, bool stackWithCurrent = false, bool attemptMerge = false)
+        public static void AddGradualMovement(GameObject g, QIGradualMovement movement, bool stackWithCurrent = false, bool attemptMerge = false)
         {
             if (!gradualMovements.ContainsKey(g))
             {
                 //did not exist before. REMEMBER TO DELETE A MOVEMENT IF IT HAS NO MORE WITHIN THE QUEUE. THERE MUST ALWAYS BE A CURRENT MOVEMENT FOR A MOVEMENT. 
-                gradualMovements.Add(g, new Queue<QGradualMovement>());
+                gradualMovements.Add(g, new Queue<QIGradualMovement>());
                 currentGradualMovements.Add(g, new AggregateGradualMovement());
                 currentGradualMovements[g].movements.Add(movement);
                 if (!movement.IsStacked())
@@ -246,7 +246,7 @@ namespace QUnity.Movement
                             if (attemptMerge)
                             {
                                 bool merged = false;
-                                foreach (QGradualMovement mov in currentGradualMovements[g].movements)
+                                foreach (QIGradualMovement mov in currentGradualMovements[g].movements)
                                 {
                                     if (mov.IsStacked() && mov.AttemptMerge(movement))
                                     {
@@ -267,7 +267,7 @@ namespace QUnity.Movement
                             if (attemptMerge)
                             {
                                 bool merged = false;
-                                QGradualMovement[] traversedMovements = gradualMovements[g].ToArray();
+                                QIGradualMovement[] traversedMovements = gradualMovements[g].ToArray();
                                 for (int i = traversedMovements.Length - 1; i > -1; i++)
                                 {
 
@@ -294,7 +294,7 @@ namespace QUnity.Movement
                         if (attemptMerge)
                         {
                             bool merged = false;
-                            QGradualMovement[] traversedMovements = gradualMovements[g].ToArray();
+                            QIGradualMovement[] traversedMovements = gradualMovements[g].ToArray();
                             for (int i = traversedMovements.Length - 1; i > -1; i++)
                             {
 
@@ -332,7 +332,7 @@ namespace QUnity.Movement
                         if (attemptMerge)
                         {
                             bool merged = false;
-                            foreach (QGradualMovement mov in currentGradualMovements[g].movements)
+                            foreach (QIGradualMovement mov in currentGradualMovements[g].movements)
                             {
                                 if (mov.AttemptMerge(movement))
                                 {
@@ -358,12 +358,12 @@ namespace QUnity.Movement
         /// <param name="movement"> the well-defined gradual movement </param>
         /// <param name="stackWithCurrent"> if this is true and the passed movement is a stacking one, stacks the movement with the current movements being executed for the gameobject. If all movements added so far to the object is already stacked, this boolean will not matter. </param>
         /// <param name="attemptMerge"> attempts to merge this movement with other ones for the object. Stacking and non-stacking movements will never be merged. Keep in mind that when this is checked, though it may potentially increase efficiency for the future, can also produce a process-intensive function-call. </param>
-        public static void AddGradualMovement(Rigidbody rb, QGradualMovement movement, bool stackWithCurrent = false, bool attemptMerge = false)
+        public static void AddGradualMovement(Rigidbody rb, QIGradualMovement movement, bool stackWithCurrent = false, bool attemptMerge = false)
         {
             if (!rigidGradualMovements.ContainsKey(rb))
             {
                 //did not exist before. REMEMBER TO DELETE A MOVEMENT IF IT HAS NO MORE WITHIN THE QUEUE. THERE MUST ALWAYS BE A CURRENT MOVEMENT FOR A MOVEMENT. 
-                rigidGradualMovements.Add(rb, new Queue<QGradualMovement>());
+                rigidGradualMovements.Add(rb, new Queue<QIGradualMovement>());
                 currentRigidGradualMovements.Add(rb, new AggregateGradualMovement());
                 currentRigidGradualMovements[rb].movements.Add(movement);
                 if (!movement.IsStacked())
@@ -387,7 +387,7 @@ namespace QUnity.Movement
                             if (attemptMerge)
                             {
                                 bool merged = false;
-                                foreach (QGradualMovement mov in currentRigidGradualMovements[rb].movements)
+                                foreach (QIGradualMovement mov in currentRigidGradualMovements[rb].movements)
                                 {
                                     if (mov.IsStacked() && mov.AttemptMerge(movement))
                                     {
@@ -408,7 +408,7 @@ namespace QUnity.Movement
                             if (attemptMerge)
                             {
                                 bool merged = false;
-                                QGradualMovement[] traversedMovements = rigidGradualMovements[rb].ToArray();
+                                QIGradualMovement[] traversedMovements = rigidGradualMovements[rb].ToArray();
                                 for (int i = traversedMovements.Length - 1; i > -1; i++)
                                 {
 
@@ -435,7 +435,7 @@ namespace QUnity.Movement
                         if (attemptMerge)
                         {
                             bool merged = false;
-                            QGradualMovement[] traversedMovements = rigidGradualMovements[rb].ToArray();
+                            QIGradualMovement[] traversedMovements = rigidGradualMovements[rb].ToArray();
                             for (int i = traversedMovements.Length - 1; i > -1; i++)
                             {
 
@@ -473,7 +473,7 @@ namespace QUnity.Movement
                         if (attemptMerge)
                         {
                             bool merged = false;
-                            foreach (QGradualMovement mov in currentRigidGradualMovements[rb].movements)
+                            foreach (QIGradualMovement mov in currentRigidGradualMovements[rb].movements)
                             {
                                 if (mov.AttemptMerge(movement))
                                 {
@@ -535,11 +535,11 @@ namespace QUnity.Movement
         {
             if (!gradualMovements.ContainsKey(g))
                 return false;
-            foreach(QGradualMovement qgm in gradualMovements[g])
+            foreach(QIGradualMovement qgm in gradualMovements[g])
             {
                 qgm.OnMovementFinish(true);
             }
-            foreach (QGradualMovement qgm in currentGradualMovements[g].movements)
+            foreach (QIGradualMovement qgm in currentGradualMovements[g].movements)
             {
                 qgm.OnMovementFinish(true);
             }
@@ -557,11 +557,11 @@ namespace QUnity.Movement
         {
             if (!rigidGradualMovements.ContainsKey(rb))
                 return false;
-            foreach (QGradualMovement qgm in rigidGradualMovements[rb])
+            foreach (QIGradualMovement qgm in rigidGradualMovements[rb])
             {
                 qgm.OnMovementFinish(true);
             }
-            foreach (QGradualMovement qgm in currentRigidGradualMovements[rb].movements)
+            foreach (QIGradualMovement qgm in currentRigidGradualMovements[rb].movements)
             {
                 qgm.OnMovementFinish(true);
             }
