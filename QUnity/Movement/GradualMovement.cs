@@ -118,14 +118,20 @@ namespace QUnity.Movement
                         if(qmov.IsStacked())
                         {
                             //just a stacked movement that has finished.
+                            qmov.OnMovementFinish(false);
                             mov.movements.Remove(qmov);
                         }
                         else
                         {
                             //the non stacked movement has finished!
+                            qmov.OnMovementFinish(false);
                             mov.RemoveStaticMovement();
                             OnCurrentMovementEnd(g);
                         }
+                    }
+                    if(mov.movements.Count == 0)
+                    {
+                        //movement of this object has completely finished.
                     }
                 }
             }
@@ -618,9 +624,17 @@ namespace QUnity.Movement
         {
             if (!currentGradualMovements.ContainsKey(g))
                 return;
+            currentGradualMovements[g].currentStaticMovement.OnMovementFinish(true);
             currentGradualMovements[g].RemoveStaticMovement();
             if (removeStacked)
+            {
                 currentGradualMovements[g].movements.Clear();
+                foreach (QIGradualMovement qgm in currentGradualMovements[g].movements)
+                {
+                    if(qgm.IsStacked())
+                        qgm.OnMovementFinish(true);
+                }
+            }
             OnCurrentMovementEnd(g);
         }
 
@@ -633,9 +647,17 @@ namespace QUnity.Movement
         {
             if (!currentRigidGradualMovements.ContainsKey(rb))
                 return;
+            currentRigidGradualMovements[rb].currentStaticMovement.OnMovementFinish(true);
             currentRigidGradualMovements[rb].RemoveStaticMovement();
             if (removeStacked)
+            {
                 currentRigidGradualMovements[rb].movements.Clear();
+                foreach (QIGradualMovement qgm in currentRigidGradualMovements[rb].movements)
+                {
+                    if (qgm.IsStacked())
+                        qgm.OnMovementFinish(true);
+                }
+            }
             OnCurrentRigidMovementEnd(rb);
         }
 
