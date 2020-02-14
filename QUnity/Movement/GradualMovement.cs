@@ -84,7 +84,7 @@ namespace QUnity.Movement
                     AggregateGradualMovement mov = currentGradualMovements[g];
                     if (mov.paused)
                         continue;
-                    
+                    mov.
                 }
 
                 //waiting happens here.
@@ -642,36 +642,55 @@ namespace QUnity.Movement
 }
 
 /// <summary>
-/// The gradual movement base class that all gradual movements implement. The base class is designed to work along with the QGradualMovementManager, with the movement itself being defined by a few virtual functions.
+/// The Gradual Movement interface that all gradual movements must implement.
 /// </summary>
-public class QGradualMovement
+public interface QIGradualMovement
 {
+    /// <summary>
+    /// Returns the displacement of the object as affected by this gradual movement, while also keeping track of the time passed. If the gradual movement is done, returns negative infinity to signal so.
+    /// </summary>
+    /// <param name="time"> the time that has passed since the last frame. </param>
+    /// <returns> the displacement to take place within the frame. </returns>
+     Vector3 GetTransformation(float time);
     /// <summary>
     /// Returns whether the gradual movement should be stacked along with a series of movements or only start when a series of movements has finished.
     /// </summary>
     /// <returns>true for stacked, false for not stacked.</returns>
-    public virtual bool IsStacked()
-    {
-        return false;
-    }
-
+    bool IsStacked();
     /// <summary>
     /// The function called by the manager when the movement has finished and been removed from the current movements of the assigned rigidbody/gameobject.
     /// </summary>
     /// <param name="premature"> this will be true if the movement was marked as finished before the movement was completed, such as when the object is removed from movement. </param>
-    public virtual void OnMovementFinish(bool premature)
-    {
-
-    }
+    void OnMovementFinish(bool premature);
 
     /// <summary>
     /// Attempts to merge the input movement into this current movement. These are often implemented such that similar types of movement, and especially linear ones over similar times, can be handled as a single movement instead to increase performance.
     /// </summary>
     /// <param name="mov"> The movement to be merged. </param>
     /// <returns> whether the input movement has been integrated into this movement. If true, this class is now responsible for adding the displacement of the other movement into itself. If false, the movement that has been attempted to be merged will be queued normally.</returns>
-    public virtual bool AttemptMerge(QGradualMovement mov)
-    {
-        return false;
-    }
-
+    bool AttemptMerge(QIGradualMovement mov);
 }
+
+///// <summary>
+///// The gradual movement base class that all gradual movements implement. The base class is designed to work along with the QGradualMovementManager, with the movement itself being defined by a few virtual functions.
+///// </summary>
+//public class QGradualMovement
+//{
+  
+//    public virtual bool IsStacked()
+//    {
+//        return false;
+//    }
+
+
+//    public virtual void OnMovementFinish(bool premature)
+//    {
+
+//    }
+
+//    public virtual bool AttemptMerge(QGradualMovement mov)
+//    {
+//        return false;
+//    }
+
+//}
