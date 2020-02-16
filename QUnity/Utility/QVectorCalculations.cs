@@ -82,11 +82,11 @@ namespace QUnity
         }
 
         /// <summary>
-        /// Assesses whether a 2D vector, defined by two points lying within the vector, also pass through a tested point. Uses Mathf.Approximately to test equivalance.
+        /// Assesses whether all points defined as 2D vectors are colinear.
         /// </summary>
-        /// <param name="anypoint">a point on the 2D vector.</param>
-        /// <param name="anypoint2">another point on the 2D vector.</param>
-        /// <param name="anypoint3">the point being tested.</param>
+        /// <param name="anypoint"></param>
+        /// <param name="anypoint2"></param>
+        /// <param name="anypoint3"></param>
         /// <returns></returns>
         public static bool Vector2Colinear(Vector2 anypoint, Vector2 anypoint2, Vector2 anypoint3)
         {
@@ -141,8 +141,6 @@ namespace QUnity
                 else
                     factor = (point[i] - anypoint[i]) / direction[i];
 
-                if (factor < 0) return false;
-
                 if (Comparisons.WithinMargin((anypoint[j] + direction[j] * factor), point[j], margin))
                     return true;
             }
@@ -151,7 +149,7 @@ namespace QUnity
         }
 
         /// <summary>
-        /// Assesses whether the ray passess the given point.
+        /// Assesses whether the ray passess the given point. Uses Mathf.Approximately() to test for equivalance 
         /// </summary>
         /// <param name="raystart"> The origin point of the ray.</param>
         /// <param name="direction"> The direction the ray follows.</param>
@@ -170,14 +168,14 @@ namespace QUnity
 
                 if (factor < 0) return false; //this is because the vector at hand is a ray.
 
-                if ((raystart[j] + direction[j] * factor) == point[j])
+                if (Mathf.Approximately((raystart[j] + direction[j] * factor) , point[j]))
                     return true;
             }
             return false;
         }
 
         /// <summary>
-        /// Assesses whether the ray passess the given point within the specified margin.
+        /// Assesses whether the ray passess the given point within the specified margin. Uses Mathf.Approximately() to test for equivalance 
         /// </summary>
         /// <param name="raystart"> The origin point of the ray.</param>
         /// <param name="direction"> The direction the ray follows.</param>
@@ -206,7 +204,7 @@ namespace QUnity
 
         #endregion
 
-        
+      
 
         #endregion
 
