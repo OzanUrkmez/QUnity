@@ -9,7 +9,9 @@ using QuestryGameGeneral.Calculations;
 namespace QUnity
 {
 
-
+    /// <summary>
+    /// A static class containing static functions for vector operations with Unity
+    /// </summary>
     public static class QVectorCalculations
     {
 
@@ -344,6 +346,7 @@ namespace QUnity
 
         }
 
+
         #endregion
 
         #endregion
@@ -384,6 +387,32 @@ namespace QUnity
         public static bool Vector2IsInBetweenTwoObtuse(Vector2 first, Vector2 second, Vector2 between)
         {
             return !Vector2IsInBetweenTwoAcute(first, second, between);
+        }
+
+        #endregion
+
+        #region Production
+
+        /// <summary>
+        /// Returns the middle vector between v1 and v2.
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static Vector2 GetVector2Middle(Vector2 v1, Vector2 v2)
+        {
+            return new Vector2(v1.x + v2.x, v2.y + v1.y) / 2;
+        }
+
+        /// <summary>
+        /// Returns the middle vector between v1 and v2.
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static Vector3 GetVector3Middle(Vector3 v1, Vector3 v2)
+        {
+            return new Vector3(v1.x + v2.x, v2.y + v1.y, v1.z + v2.z) / 2;
         }
 
         #endregion
