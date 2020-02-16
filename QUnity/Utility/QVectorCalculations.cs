@@ -78,7 +78,7 @@ namespace QUnity
         /// <returns></returns>
         public static bool Vector2InBetweenNaive(Vector2 p1, Vector2 p2, Vector2 p)
         {
-            return (p2.x >= p1.x ? p2.x - p1.x >= p2.x - p.x : p1.x - p2.x >= p1.x - p.x) && (p2.x >= p1.x ? p2.x - p1.x >= p2.x - p.x : p1.x - p2.x >= p1.x - p.x);
+            return (p2.x >= p1.x ? p2.x - p1.x >= p2.x - p.x : p1.x - p2.x >= p1.x - p.x) && (p2.y >= p1.y ? p2.y - p1.y >= p2.y - p.y : p1.y - p2.y >= p1.y - p.y);
         }
 
         /// <summary>
@@ -205,6 +205,8 @@ namespace QUnity
         }
 
         #endregion
+
+        
 
         #endregion
 
