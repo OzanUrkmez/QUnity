@@ -67,6 +67,49 @@ namespace QUnity
 
         #region Pass Point
 
+        #region Vector2 
+
+        /// <summary>
+        /// Returns whether p's x value is inbetween those of p1 and p2's x values and p's y value is inbetween those of p1 and p2's y values.
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static bool Vector2InBetweenNaive(Vector2 p1, Vector2 p2, Vector2 p)
+        {
+            return (p2.x >= p1.x ? p2.x - p1.x >= p2.x - p.x : p1.x - p2.x >= p1.x - p.x) && (p2.x >= p1.x ? p2.x - p1.x >= p2.x - p.x : p1.x - p2.x >= p1.x - p.x);
+        }
+
+        /// <summary>
+        /// Assesses whether a 2D vector, defined by two points lying within the vector, also pass through a tested point. Uses Mathf.Approximately to test equivalance.
+        /// </summary>
+        /// <param name="anypoint">a point on the 2D vector.</param>
+        /// <param name="anypoint2">another point on the 2D vector.</param>
+        /// <param name="anypoint3">the point being tested.</param>
+        /// <returns></returns>
+        public static bool Vector2Colinear(Vector2 anypoint, Vector2 anypoint2, Vector2 anypoint3)
+        {
+            float len1 = (anypoint - anypoint2).magnitude;
+            float len2 = (anypoint - anypoint3).magnitude;
+            float len3 = (anypoint3 - anypoint2).magnitude;
+            if(len1 > len2 && len1 > len3)
+            {
+                //len1 biggest
+                return Mathf.Approximately(len2 + len3, len1);
+            }
+            else if(len2 > len1 && len2 > len3)
+            {
+                //len2 biggest
+                return Mathf.Approximately(len1 + len3, len2);
+            }
+            else
+            {
+                //len3 biggest.
+                return Mathf.Approximately(len2 + len3, len3);
+            }
+        }
+
         /// <summary>
         /// Assesses whether the specified vector, defined by a direction and any point on the vector, passess the specified point
         /// </summary>
@@ -76,24 +119,7 @@ namespace QUnity
         /// <returns></returns>
         public static bool Vector2PassesPoint(Vector2 anypoint, Vector2 direction, Vector2 point)
         {
-            if (anypoint == point) return true;
-            for (int i = 0; i < 2; i++)
-            {
-                int j = i == 0 ? 1 : 0;
-                float factor;
-                try
-                {
-                    factor = (point[i] - anypoint[i]) / direction[i];
-                }
-                catch
-                {
-                    factor = 0;
-                }
-
-                if ((anypoint[j] + direction[j] * factor) == point[j])
-                    return true;
-            }
-            return false;
+            return Vector2Colinear(anypoint, anypoint + direction, point);
         }
 
         /// <summary>
@@ -106,20 +132,14 @@ namespace QUnity
         /// <returns></returns>
         public static bool Vector2PassesPoint(Vector2 anypoint, Vector2 direction, Vector2 point, float margin)
         {
-            if (Vector2WithinMargin(anypoint, point, margin)) return true;
-
             for (int i = 0; i < 2; i++)
             {
                 int j = i == 0 ? 1 : 0;
                 float factor;
-                try
-                {
-                    factor = (point[i] - anypoint[i]) / direction[i];
-                }
-                catch
-                {
+                if (direction[i] == 0)
                     factor = 0;
-                }
+                else
+                    factor = (point[i] - anypoint[i]) / direction[i];
 
                 if (factor < 0) return false;
 
@@ -139,19 +159,14 @@ namespace QUnity
         /// <returns>True if the ray starts on or passess the specified point.</returns>
         public static bool Vector2RayPassesPoint(Vector2 raystart, Vector2 direction, Vector2 point)
         {
-            if (raystart == point) return true;
             for (int i = 0; i < 2; i++)
             {
                 int j = i == 0 ? 1 : 0;
                 float factor;
-                try
-                {
-                    factor = (point[i] - raystart[i]) / direction[i];
-                }
-                catch
-                {
+                if (direction[i] == 0)
                     factor = 0;
-                }
+                else
+                    factor = (point[i] - raystart[i]) / direction[i];
 
                 if (factor < 0) return false; //this is because the vector at hand is a ray.
 
@@ -171,20 +186,14 @@ namespace QUnity
         /// <returns>True if the two vectors are within the same margin of each other or the ray itself passess the point within the margin.</returns>
         public static bool Vector2RayPassesPoint(Vector2 raystart, Vector2 direction, Vector2 point, float margin)
         {
-            if (Vector2WithinMargin(raystart, point, margin)) return true;
-
             for (int i = 0; i < 2; i++)
             {
                 int j = i == 0 ? 1 : 0;
                 float factor;
-                try
-                {
-                    factor = (point[i] - raystart[i]) / direction[i];
-                }
-                catch
-                {
+                if (direction[i] == 0)
                     factor = 0;
-                }
+                else
+                    factor = (point[i] - raystart[i]) / direction[i];
 
                 if (factor < 0) return false;
 
@@ -194,6 +203,8 @@ namespace QUnity
             return false;
 
         }
+
+        #endregion
 
         #endregion
 
