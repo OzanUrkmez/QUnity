@@ -32,15 +32,17 @@ namespace QUnity.Movement
         /// </summary>
         /// <param name="gameObject"> The gameobject to be moved. </param>
         /// <param name="startingPosition"> The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts. </param>
-        /// <param name="finalPosition"> The position the gameobject will be moving towards. </param>
+        /// <param name="finalPosition"> The position the gameobject will be moving towards. This may not be the same as the starting point. </param>
         /// <param name="time"> The time it shall take for the movement to finish. </param>
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
-        /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and this point. </param>
+        /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
         /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be 10 and 180 </param>
         public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree , float time, bool stacked)
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
+            if (QVectorCalculations.Vector3MathfApproximately(startingPosition, finalPosition))
+                throw new Exception("The input starting and ending vectors cannot be the same!");
             movedObject = gameObject;
             initial = startingPosition;
             final = finalPosition;
@@ -55,15 +57,17 @@ namespace QUnity.Movement
         /// </summary>
         /// <param name="rigidbody"> The gameobject to be moved. </param>
         /// <param name="startingPosition"> The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts. </param>
-        /// <param name="finalPosition"> The position the gameobject will be moving towards. </param>
+        /// <param name="finalPosition"> The position the gameobject will be moving towards. This may not be the same as the starting point. </param>
         /// <param name="time"> The time it shall take for the movement to finish. </param>
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
-        /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and this point. </param>
+        /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
         /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be 10 and 180 </param>
         public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked)
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
+            if (QVectorCalculations.Vector3MathfApproximately(startingPosition, finalPosition))
+                throw new Exception("The input starting and ending vectors cannot be the same!");
             isRigidBodyMovement = true;
             this.rigidbody = rigidbody;
             initial = startingPosition;
@@ -94,6 +98,7 @@ namespace QUnity.Movement
             {
                 //regular movement.
                 movedObject.transform.position = initial;
+
             }
         }
 
