@@ -11,11 +11,11 @@ namespace QUnity.Movement
     /// <summary>
     /// Defines an elliptical gradual movement integrated into the Questry Gradual Movement System. 
     /// </summary>
-    public class QGradualEllipticalMovement : QIGradualMovement
+    public class QGradualCircularMovement : QIGradualMovement
     {
 
         private Vector3 initial, final, pivot;
-        private float degree, xCoeff, yCoeff;
+        private float degree, xCoeff, yCoeff; //we make circles nao
         private float movementTime;
         private bool movementStacked;
         private float currentTime = -1;
@@ -37,7 +37,7 @@ namespace QUnity.Movement
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"></param>
         /// <param name="degree"> </param>
-        public QGradualEllipticalMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree , float time, bool stacked)
+        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree , float time, bool stacked)
         {
             movedObject = gameObject;
             initial = startingPosition;
@@ -58,7 +58,7 @@ namespace QUnity.Movement
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"></param>
         /// <param name="degree"> </param>
-        public QGradualEllipticalMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked)
+        public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked)
         {
             isRigidBodyMovement = true;
             this.rigidbody = rigidbody;
