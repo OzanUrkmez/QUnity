@@ -17,6 +17,7 @@ namespace QUnity.Movement
         private Vector3 initial, final, circularPivot;
         private float xCoeff, yCoeff;
         private float movementTime;
+        private float currentTime;
         private GameObject movedObject;
         private Rigidbody rigidbody;
 
