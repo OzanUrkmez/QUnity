@@ -51,7 +51,7 @@ namespace QUnity.Movement
         /// <summary>
         /// Initializes the elliptical movement
         /// </summary>
-        /// <param name="gameObject"> The gameobject to be moved. </param>
+        /// <param name="rigidbody"> The gameobject to be moved. </param>
         /// <param name="startingPosition"> The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts. </param>
         /// <param name="finalPosition"> The position the gameobject will be moving towards. </param>
         /// <param name="time"> The time it shall take for the movement to finish. </param>
