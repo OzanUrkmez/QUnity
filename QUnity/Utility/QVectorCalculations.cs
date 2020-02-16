@@ -204,7 +204,147 @@ namespace QUnity
 
         #endregion
 
-      
+        #region Vector3 
+
+        /// <summary>
+        /// Returns whether p's x value is inbetween those of p1 and p2's x values and p's y value is inbetween those of p1 and p2's y values.
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static bool Vector3InBetweenNaive(Vector3 p1, Vector3 p2, Vector3 p)
+        {
+            return (p2.x >= p1.x ? p2.x - p1.x >= p2.x - p.x : p1.x - p2.x >= p1.x - p.x) && (p2.y >= p1.y ? p2.y - p1.y >= p2.y - p.y : p1.y - p2.y >= p1.y - p.y) && (p2.z >= p1.z ? p2.z - p1.z >= p2.z - p.z : p1.z - p2.z >= p1.z - p.z);
+        }
+
+        /// <summary>
+        /// Assesses whether all points defined as 3D vectors are colinear.
+        /// </summary>
+        /// <param name="anypoint"></param>
+        /// <param name="anypoint2"></param>
+        /// <param name="anypoint3"></param>
+        /// <returns></returns>
+        public static bool Vector3Colinear(Vector3 anypoint, Vector3 anypoint2, Vector3 anypoint3)
+        {
+            float len1 = (anypoint - anypoint2).magnitude;
+            float len2 = (anypoint - anypoint3).magnitude;
+            float len3 = (anypoint3 - anypoint2).magnitude;
+            if (len1 > len2 && len1 > len3)
+            {
+                //len1 biggest
+                return Mathf.Approximately(len2 + len3, len1);
+            }
+            else if (len2 > len1 && len2 > len3)
+            {
+                //len2 biggest
+                return Mathf.Approximately(len1 + len3, len2);
+            }
+            else
+            {
+                //len3 biggest.
+                return Mathf.Approximately(len2 + len3, len3);
+            }
+        }
+
+        /// <summary>
+        /// Assesses whether the specified vector, defined by a direction and any point on the vector, passess the specified point
+        /// </summary>
+        /// <param name="anypoint"> Any point along the vector</param>
+        /// <param name="direction"> The direction of the vector.</param>
+        /// <param name="point"> The point being assessed.</param>
+        /// <returns></returns>
+        public static bool Vector3PassesPoint(Vector2 anypoint, Vector2 direction, Vector2 point)
+        {
+            return Vector3Colinear(anypoint, anypoint + direction, point);
+        }
+
+        /// <summary>
+        /// Assesses whether the specified vector, defined by a direction and any point on the vector, passess the specified point within the margin
+        /// </summary>
+        /// <param name="anypoint"> Any point along the vector</param>
+        /// <param name="direction"> The direction of the vector.</param>
+        /// <param name="point"> The point being assessed.</param>
+        /// <param name="margin"> The margin</param>
+        /// <returns></returns>
+        public static bool Vector3PassesPoint(Vector2 anypoint, Vector2 direction, Vector2 point, float margin)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                int j = i == 0 ? 1 : 0;
+                int z = j == 0 ? (i == 1 ? 2 : 1) : 2;
+                float factor;
+                if (direction[i] == 0)
+                    factor = 0;
+                else
+                    factor = (point[i] - anypoint[i]) / direction[i];
+
+                if (factor < 0) return false;
+
+                if (Comparisons.WithinMargin((anypoint[j] + direction[j] * factor), point[j], margin) && Comparisons.WithinMargin((anypoint[z] + direction[z] * factor), point[z], margin))
+                    return true;
+            }
+            return false;
+
+        }
+
+        /// <summary>
+        /// Assesses whether the ray passess the given point. Uses Mathf.Approximately() to test for equivalance
+        /// </summary>
+        /// <param name="raystart"> The origin point of the ray.</param>
+        /// <param name="direction"> The direction the ray follows.</param>
+        /// <param name="point"> The point being assessed.</param>
+        /// <returns>True if the ray starts on or passess the specified point.</returns>
+        public static bool Vector3RayPassesPoint(Vector2 raystart, Vector2 direction, Vector2 point)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                int j = i == 0 ? 1 : 0;
+                int z = j == 0 ? (i == 1 ? 2 : 1) : 2;
+                float factor;
+                if (direction[i] == 0)
+                    factor = 0;
+                else
+                    factor = (point[i] - raystart[i]) / direction[i];
+
+                if (factor < 0) return false; //this is because the vector at hand is a ray.
+
+                if (Mathf.Approximately(raystart[j] + direction[j] * factor , point[j]) && Mathf.Approximately(raystart[z] + direction[z] * factor, point[z]))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Assesses whether the ray passess the given point within the specified margin.
+        /// </summary>
+        /// <param name="raystart"> The origin point of the ray.</param>
+        /// <param name="direction"> The direction the ray follows.</param>
+        /// <param name="point"> The point being assessed.</param>
+        /// <param name="margin"> The margin.</param>
+        /// <returns>True if the two vectors are within the same margin of each other or the ray itself passess the point within the margin.</returns>
+        public static bool Vector3RayPassesPoint(Vector2 raystart, Vector2 direction, Vector2 point, float margin)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                int j = i == 0 ? 1 : 0;
+                int z = j == 0 ? (i == 1 ? 2 : 1) : 2;
+                float factor;
+                if (direction[i] == 0)
+                    factor = 0;
+                else
+                    factor = (point[i] - raystart[i]) / direction[i];
+
+                if (factor < 0) return false;
+
+                if (Comparisons.WithinMargin((raystart[j] + direction[j] * factor), point[j], margin) && Comparisons.WithinMargin((raystart[z] + direction[z] * factor), point[z], margin))
+                    return true;
+            }
+            return false;
+
+        }
+
+        #endregion
 
         #endregion
 
