@@ -40,6 +40,28 @@ namespace QUnity
             Comparisons.WithinMargin(v1.z, v2.z, margin);
         }
 
+        /// <summary>
+        /// Uses the Mathf.Approximately function on the x and y coordiantes of 2D vectors to determine whether they are equal.
+        /// </summary>
+        /// <param name="v1">first vector</param>
+        /// <param name="v2">second vector</param>
+        /// <returns>true if the two vectors are approximately equal, false otherwise.</returns>
+        public static bool Vector2MathfApproximately(Vector2 v1, Vector2 v2)
+        {
+            return Mathf.Approximately(v1.x, v2.x) && Mathf.Approximately(v1.y, v2.y);
+        }
+
+        /// <summary>
+        /// Uses the Mathf.Approximately function on the x, y and z coordiantes of 3D vectors to determine whether they are equal.
+        /// </summary>
+        /// <param name="v1">first vector</param>
+        /// <param name="v2">second vector</param>
+        /// <returns>true if the two vectors are approximately equal, false otherwise.</returns>
+        public static bool Vector3MathfApproximately(Vector3 v1, Vector3 v2)
+        {
+            return Mathf.Approximately(v1.x, v2.x) && Mathf.Approximately(v1.y, v2.y) && Mathf.Approximately(v1.z, v2.z);
+        }
+
         #endregion
 
 
