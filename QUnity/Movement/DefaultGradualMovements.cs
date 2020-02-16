@@ -43,6 +43,8 @@ namespace QUnity.Movement
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
             if (QVectorCalculations.Vector3MathfApproximately(startingPosition, finalPosition))
                 throw new Exception("The input starting and ending vectors cannot be the same!");
+            if (QVectorCalculations.Vector3Colinear(startingPosition, finalPosition, referencePivot))
+                throw new Exception("The reference pivot, starting position, and the final position cannot be colinear!");
             movedObject = gameObject;
             initial = startingPosition;
             final = finalPosition;
@@ -68,6 +70,8 @@ namespace QUnity.Movement
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
             if (QVectorCalculations.Vector3MathfApproximately(startingPosition, finalPosition))
                 throw new Exception("The input starting and ending vectors cannot be the same!");
+            if (QVectorCalculations.Vector3Colinear(startingPosition, finalPosition, referencePivot))
+                throw new Exception("The reference pivot, starting position, and the final position cannot be colinear!");
             isRigidBodyMovement = true;
             this.rigidbody = rigidbody;
             initial = startingPosition;
