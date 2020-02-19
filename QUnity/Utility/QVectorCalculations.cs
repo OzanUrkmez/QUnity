@@ -423,7 +423,7 @@ namespace QUnity
         /// <param name="lineDir">unit vector in direction of line, either direction works</param>
         /// <param name="pnt">the point to find nearest on line for</param>
         /// <returns> the nearest point on a given line to a given point.</returns>
-        public static Vector3 NearestPointOnLine(Vector3 linePnt, Vector3 lineDir, Vector3 pnt)
+        public static Vector3 GetNearestPointOnLine(Vector3 linePnt, Vector3 lineDir, Vector3 pnt)
         {
             lineDir.Normalize();//this needs to be a unit vector
             var v = pnt - linePnt;
@@ -438,7 +438,7 @@ namespace QUnity
         /// <param name="lineDir">unit vector in direction of line, either direction works.</param>
         /// <param name="pnt">the point to find nearest on line for.</param>
         /// <returns> the nearest point on a given line to a given point.</returns>
-        public static Vector2 NearestPointOnLine(Vector2 linePnt, Vector2 lineDir, Vector2 pnt)
+        public static Vector2 GetNearestPointOnLine(Vector2 linePnt, Vector2 lineDir, Vector2 pnt)
         {
             lineDir.Normalize();//this needs to be a unit vector
             var v = pnt - linePnt;
@@ -453,7 +453,7 @@ namespace QUnity
         /// <param name="end">end point of the line.</param>
         /// <param name="pnt">the point to find nearest on line for.</param>
         /// <returns>the nearest point on a given finite line to a given point.</returns>
-        public static Vector3 NearestPointOnFiniteLine(Vector3 start, Vector3 end, Vector3 pnt)
+        public static Vector3 GetNearestPointOnFiniteLine(Vector3 start, Vector3 end, Vector3 pnt)
         {
             var line = (end - start);
             var len = line.magnitude;
@@ -472,7 +472,7 @@ namespace QUnity
         /// <param name="end">end point of the line.</param>
         /// <param name="pnt">the point to find nearest on line for.</param>
         /// <returns>the nearest point on a given finite line to a given point.</returns>
-        public static Vector2 NearestPointOnFiniteLine(Vector2 start, Vector2 end, Vector2 pnt)
+        public static Vector2 GetNearestPointOnFiniteLine(Vector2 start, Vector2 end, Vector2 pnt)
         {
             var line = (end - start);
             var len = line.magnitude;
