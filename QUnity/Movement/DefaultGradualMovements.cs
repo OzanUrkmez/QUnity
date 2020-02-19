@@ -103,7 +103,7 @@ namespace QUnity.Movement
                 //regular movement.
                 movedObject.transform.position = initial;
                 Vector3 middle = QVectorCalculations.GetVector3Middle(initial, final);
-                Vector3 dir = 
+                Vector3 dir = pivot - QVectorCalculations.GetNearestPointOnLine(middle, (final - initial), pivot);
 
             }
         }
