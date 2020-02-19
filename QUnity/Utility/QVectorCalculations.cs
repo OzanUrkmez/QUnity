@@ -415,6 +415,37 @@ namespace QUnity
             return new Vector3(v1.x + v2.x, v2.y + v1.y, v1.z + v2.z) / 2;
         }
 
+
+        /// <summary>
+        /// returns the nearest point on a given line to a given point.
+        /// </summary>
+        /// <param name="linePnt">any point given on the line, acting as the origin point.</param>
+        /// <param name="lineDir">unit vector in direction of line, either direction works</param>
+        /// <param name="pnt">the point to find nearest on line for</param>
+        /// <returns> the nearest point on a given line to a given point.</returns>
+        public static Vector3 NearestPointOnLine(Vector3 linePnt, Vector3 lineDir, Vector3 pnt)
+        {
+            lineDir.Normalize();//this needs to be a unit vector
+            var v = pnt - linePnt;
+            var d = Vector3.Dot(v, lineDir);
+            return linePnt + lineDir * d;
+        }
+
+        /// <summary>
+        /// returns the nearest point on a given line to a given point.
+        /// </summary>
+        /// <param name="linePnt">any point given on the line, acting as the origin point.</param>
+        /// <param name="lineDir">unit vector in direction of line, either direction works</param>
+        /// <param name="pnt">the point to find nearest on line for</param>
+        /// <returns> the nearest point on a given line to a given point.</returns>
+        public static Vector2 NearestPointOnLine(Vector2 linePnt, Vector2 lineDir, Vector2 pnt)
+        {
+            lineDir.Normalize();//this needs to be a unit vector
+            var v = pnt - linePnt;
+            var d = Vector2.Dot(v, lineDir);
+            return linePnt + lineDir * d;
+        }
+
         #endregion
 
     }
