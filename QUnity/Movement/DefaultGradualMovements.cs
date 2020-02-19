@@ -9,7 +9,7 @@ namespace QUnity.Movement
 {
     //event systems etc as well. speed coefficient marks.
     /// <summary>
-    /// Defines an elliptical gradual movement integrated into the Questry Gradual Movement System. 
+    /// Defines a semi-circular gradual movement integrated into the Questry Gradual Movement System. 
     /// </summary>
     public class QGradualCircularMovement : QIGradualMovement
     {
@@ -102,6 +102,8 @@ namespace QUnity.Movement
             {
                 //regular movement.
                 movedObject.transform.position = initial;
+                Vector3 middle = QVectorCalculations.GetVector3Middle(initial, final);
+                Vector3 dir = 
 
             }
         }
@@ -143,4 +145,13 @@ namespace QUnity.Movement
         #endregion
 
     }
+
+    /// <summary>
+    /// Does an entire circular movement, starting at a point and ending at it as well, but passing through a given point that comes 180 degrees after itself.
+    /// </summary>
+    public class QGradualFullCircularMovement
+    {
+
+    }
+
 }

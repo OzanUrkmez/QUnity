@@ -81,7 +81,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Movement\GradualMovement.cs" />
+    <Compile Include="Movement\DefaultGradualMovements.cs" />
+    <Compile Include="Movement\QGradualMovementManager.cs" />
     <Compile Include="UI\Layout Groups\QLayoutElementMinUpToAMaxSetter.cs" />
     <Compile Include="UI\QUIUtility.cs" />
     <Compile Include="Utility\QGeneralUtility.cs" />
