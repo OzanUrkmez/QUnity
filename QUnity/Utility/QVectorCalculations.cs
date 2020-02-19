@@ -435,8 +435,8 @@ namespace QUnity
         /// returns the nearest point on a given line to a given point.
         /// </summary>
         /// <param name="linePnt">any point given on the line, acting as the origin point.</param>
-        /// <param name="lineDir">unit vector in direction of line, either direction works</param>
-        /// <param name="pnt">the point to find nearest on line for</param>
+        /// <param name="lineDir">unit vector in direction of line, either direction works.</param>
+        /// <param name="pnt">the point to find nearest on line for.</param>
         /// <returns> the nearest point on a given line to a given point.</returns>
         public static Vector2 NearestPointOnLine(Vector2 linePnt, Vector2 lineDir, Vector2 pnt)
         {
@@ -444,6 +444,44 @@ namespace QUnity
             var v = pnt - linePnt;
             var d = Vector2.Dot(v, lineDir);
             return linePnt + lineDir * d;
+        }
+
+        /// <summary>
+        /// returns the nearest point on a given finite line to a given point.
+        /// </summary>
+        /// <param name="start">starting point of the line.</param>
+        /// <param name="end">end point of the line.</param>
+        /// <param name="pnt">the point to find nearest on line for.</param>
+        /// <returns>the nearest point on a given finite line to a given point.</returns>
+        public static Vector3 NearestPointOnFiniteLine(Vector3 start, Vector3 end, Vector3 pnt)
+        {
+            var line = (end - start);
+            var len = line.magnitude;
+            line.Normalize();
+
+            var v = pnt - start;
+            var d = Vector3.Dot(v, line);
+            d = Mathf.Clamp(d, 0f, len);
+            return start + line * d;
+        }
+
+        /// <summary>
+        /// returns the nearest point on a given finite line to a given point.
+        /// </summary>
+        /// <param name="start">starting point of the line.</param>
+        /// <param name="end">end point of the line.</param>
+        /// <param name="pnt">the point to find nearest on line for.</param>
+        /// <returns>the nearest point on a given finite line to a given point.</returns>
+        public static Vector2 NearestPointOnFiniteLine(Vector2 start, Vector2 end, Vector2 pnt)
+        {
+            var line = (end - start);
+            var len = line.magnitude;
+            line.Normalize();
+
+            var v = pnt - start;
+            var d = Vector2.Dot(v, line);
+            d = Mathf.Clamp(d, 0f, len);
+            return start + line * d;
         }
 
         #endregion
