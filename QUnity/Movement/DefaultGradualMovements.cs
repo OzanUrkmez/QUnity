@@ -22,7 +22,7 @@ namespace QUnity.Movement
         private GameObject movedObject;
         private Rigidbody rigidbody;
         private bool isRigidBodyMovement = false;
-
+        private bool attemptMerge = false;
         private Action<bool> onMovementFinish;
 
         //TODO Ability to transform already created ellipsis for reuse? 
@@ -39,8 +39,9 @@ namespace QUnity.Movement
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
         /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
+        /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree , float time, bool stacked, Action<bool> onMovementFinish = null)
+        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree , float time, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null)
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
@@ -55,7 +56,7 @@ namespace QUnity.Movement
             movementTime = time;
             this.degree = degree;
             movementStacked = stacked;
-
+            this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
 
             degree = degree * Mathf.Deg2Rad;
@@ -71,8 +72,9 @@ namespace QUnity.Movement
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
         /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
+        /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-        public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked, Action<bool> onMovementFinish = null)
+        public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null)
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
@@ -88,7 +90,7 @@ namespace QUnity.Movement
             movementTime = time;
             this.degree = degree;
             movementStacked = stacked;
-
+            this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
 
             degree = degree * Mathf.Deg2Rad;
@@ -128,7 +130,9 @@ namespace QUnity.Movement
                 pivot = realPivot;
 
                 currentTime = movementTime;
-            }
+
+                QGradualMovementManager.AddGradualMovement(movedObject, this, movementStacked, attemptMerge);
+            } 
         }
 
         /// <summary>
