@@ -18,7 +18,7 @@ namespace QUnity.Movement
 
         private static QGradualMovementManager singleton;
 
-        private void Start()
+        private void Awake()
         {
 
             if (singleton != null)
