@@ -104,6 +104,7 @@ namespace QUnity.Movement
                 movedObject.transform.position = initial;
                 Vector3 middle = QVectorCalculations.GetVector3Middle(initial, final);
                 Vector3 dir = pivot - QVectorCalculations.GetNearestPointOnLine(middle, (final - initial), pivot);
+                Vector3 realPivot = dir * (final - initial).magnitude * Mathf.Pow(Mathf.Tan(Mathf.Deg2Rad * degree / 2), -1);
 
             }
         }
