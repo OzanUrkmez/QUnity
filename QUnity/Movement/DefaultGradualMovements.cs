@@ -23,6 +23,8 @@ namespace QUnity.Movement
         private Rigidbody rigidbody;
         private bool isRigidBodyMovement = false;
 
+        private Action<bool> onMovementFinish;
+
         //TODO Ability to transform already created ellipsis for reuse? 
 
         #region Construction
@@ -37,7 +39,8 @@ namespace QUnity.Movement
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
         /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be 10 and 180 </param>
-        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree , float time, bool stacked)
+        /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
+        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree , float time, bool stacked, Action<bool> onMovementFinish = null)
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
@@ -53,6 +56,8 @@ namespace QUnity.Movement
             lastInputTime = time;
             this.degree = degree;
             movementStacked = stacked;
+
+            this.onMovementFinish = onMovementFinish;
         }
 
         /// <summary>
@@ -65,7 +70,8 @@ namespace QUnity.Movement
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
         /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be 10 and 180 </param>
-        public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked)
+        /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
+        public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked, Action<bool> onMovementFinish = null)
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
@@ -82,6 +88,8 @@ namespace QUnity.Movement
             lastInputTime = time;
             this.degree = degree;
             movementStacked = stacked;
+
+            this.onMovementFinish = onMovementFinish;
         }
 
         #endregion
@@ -123,17 +131,31 @@ namespace QUnity.Movement
         /// </summary>
         public bool MovementIsStacked { get; set; }
 
+        /// <summary>
+        /// Attempts to merge the input movement into this current movement. These are often implemented such that similar types of movement, and especially linear ones over similar times, can be handled as a single movement instead to increase performance.
+        /// </summary>
+        /// <param name="mov"> The movement to be merged. </param>
+        /// <returns> whether the input movement has been integrated into this movement. If true, this class is now responsible for adding the displacement of the other movement into itself. If false, the movement that has been attempted to be merged will be queued normally.</returns>
         public bool AttemptMerge(QIGradualMovement mov)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Based on the time calls the manager has made, returns the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.
+        /// </summary>
+        /// <returns>the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.</returns>
         public float GetTimeLeft()
         {
             throw new NotImplementedException();
         }
 
-        public Vector3 GetTransformation(float time)
+        /// <summary>
+        /// USED CHIEFLY BY THE MOVEMENT MANAGER. Returns the displacement of the object as affected by this gradual movement, while also keeping track of the time passed. If the gradual movement is done, returns negative infinity to signal so.
+        /// </summary>
+        /// <param name="time"> the time that has passed since the last frame. </param>
+        /// <returns> the displacement to take place within the frame. Negative infinity if the movement is done. </returns>
+        public Vector3 GetApplyTransformation(float time)
         {
             throw new NotImplementedException();
         }
@@ -147,9 +169,14 @@ namespace QUnity.Movement
             return MovementIsStacked;
         }
 
+        /// <summary>
+        /// The function called by the manager when the movement has finished and been removed from the current movements of the assigned rigidbody/gameobject. The function will not be called when changing scenes, though the movements and their objects will nonetheless be removed.
+        /// </summary>
+        /// <param name="premature"> this will be true if the movement was marked as finished before the movement was completed, such as when the object is removed from movement. </param>
         public void OnMovementFinish(bool premature)
         {
-            throw new NotImplementedException();
+            if (onMovementFinish != null)
+                onMovementFinish(premature);
         }
 
         #endregion

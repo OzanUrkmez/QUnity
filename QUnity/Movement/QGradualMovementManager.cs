@@ -114,7 +114,7 @@ namespace QUnity.Movement
                     toBeRemoved.Clear();
                     foreach (QIGradualMovement qmov in mov.movements)
                     {
-                        Vector3 trans = qmov.GetTransformation(time);
+                        Vector3 trans = qmov.GetApplyTransformation(time);
                         if(trans == Vector3.negativeInfinity)
                         {
                             //the movement is done! remove it handle logic and then continue.
@@ -164,7 +164,7 @@ namespace QUnity.Movement
                     toBeRemoved.Clear();
                     foreach (QIGradualMovement qmov in mov.movements)
                     {
-                        Vector3 trans = qmov.GetTransformation(time);
+                        Vector3 trans = qmov.GetApplyTransformation(time);
                         if (trans == Vector3.negativeInfinity)
                         {
                             //the movement is done! remove it handle logic and then continue.
@@ -792,7 +792,7 @@ namespace QUnity.Movement
         /// </summary>
         /// <param name="time"> the time that has passed since the last frame. </param>
         /// <returns> the displacement to take place within the frame. Negative infinity if the movement is done. </returns>
-        Vector3 GetTransformation(float time);
+        Vector3 GetApplyTransformation(float time);
         /// <summary>
         /// Returns whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack.
         /// </summary>
@@ -812,9 +812,9 @@ namespace QUnity.Movement
         bool AttemptMerge(QIGradualMovement mov);
 
         /// <summary>
-        /// Based on the time calls the manager has made, returns the amount of time left before the movement is done and the GetTransformation function returns negative infinity.
+        /// Based on the time calls the manager has made, returns the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.
         /// </summary>
-        /// <returns>the amount of time left before the movement is done and the GetTransformation function returns negative infinity.</returns>
+        /// <returns>the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.</returns>
         float GetTimeLeft();
     }
 
