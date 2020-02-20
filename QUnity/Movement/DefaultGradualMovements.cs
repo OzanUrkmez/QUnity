@@ -16,7 +16,7 @@ namespace QUnity.Movement
 
         private Vector3 initial, final, pivot;
         private float degree, xCoeff, yCoeff; //we make circles nao
-        private float movementTime;
+        private float movementTime, lastInputTime;
         private bool movementStacked;
         private float currentTime = -1;
         private GameObject movedObject;
@@ -50,6 +50,7 @@ namespace QUnity.Movement
             final = finalPosition;
             pivot = referencePivot;
             movementTime = time;
+            lastInputTime = time;
             this.degree = degree;
             movementStacked = stacked;
         }
@@ -78,6 +79,7 @@ namespace QUnity.Movement
             final = finalPosition;
             pivot = referencePivot;
             movementTime = time;
+            lastInputTime = time;
             this.degree = degree;
             movementStacked = stacked;
         }
