@@ -89,6 +89,8 @@ namespace QUnity.Movement
 
         #region Manager Communication and Manager Related Properties
 
+        Vector3 v1, v2;
+
         /// <summary>
         /// Starts the defined movement if it has not already been started.
         /// </summary>
@@ -103,11 +105,16 @@ namespace QUnity.Movement
             else
             {
                 //regular movement.
+                //construct the real pivot.
                 movedObject.transform.position = initial;
                 Vector3 middle = QVectorCalculations.GetVector3Middle(initial, final);
                 Vector3 dir = pivot - QVectorCalculations.GetNearestPointOnLine(middle, (final - initial), pivot);
                 Vector3 realPivot = dir * (final - initial).magnitude * Mathf.Pow(Mathf.Tan(Mathf.Deg2Rad * degree / 2), -1);
 
+                //construct circle.
+                v1 = (initial - realPivot).normalized * (initial - realPivot).magnitude;
+                v2 = (middle - QVectorCalculations.GetNearestPointOnLine(realPivot, v1, middle)).normalized * (initial - realPivot).magnitude;
+                pivot = realPivot;
             }
         }
 
