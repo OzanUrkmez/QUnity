@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using QuestryGameGeneral.EventSystems;
 
 namespace QUnity.Utility
 {
@@ -16,8 +15,8 @@ namespace QUnity.Utility
 
         private static QKeyboardInputHandler singleton;
 
-        private Dictionary<KeyCode, EmptyEvent> keyPressEvents = new Dictionary<KeyCode, EmptyEvent>();
-        private Dictionary<KeyCode, EmptyEvent> keyReleaseEvents = new Dictionary<KeyCode, EmptyEvent>();
+        private Dictionary<KeyCode, Action> keyPressEvents = new Dictionary<KeyCode, Action>();
+        private Dictionary<KeyCode, Action> keyReleaseEvents = new Dictionary<KeyCode, Action>();
         private List<KeyCode> keyCodes = new List<KeyCode>();
         #region Unity Functions and Handling
 
@@ -35,9 +34,8 @@ namespace QUnity.Utility
             {
                 if (keyPressEvents.ContainsKey(c))
                     continue;
-                keyPressEvents.Add(c, new EmptyEvent());
-                keyReleaseEvents.Add(c, new EmptyEvent());
-                keyCodes.Add(c);
+                keyPressEvents.Add(c, null);
+                keyReleaseEvents.Add(c, null);
             }
 
         }
@@ -47,9 +45,9 @@ namespace QUnity.Utility
             foreach(KeyCode c in keyCodes)
             {
                 if (Input.GetKeyDown(c))
-                    keyPressEvents[c].Dispatch();
+                    keyPressEvents[c]?.Invoke();
                 if (Input.GetKeyUp(c))
-                    keyReleaseEvents[c].Dispatch();
+                    keyReleaseEvents[c]?.Invoke();
             }
         }
 
@@ -62,24 +60,32 @@ namespace QUnity.Utility
 
         #region Subscription and Unsubscription
 
-        public void SubscribeKeyPress(KeyCode c, EmptyEventType e)
+        public static void SubscribeKeyPress(KeyCode c, Action e)
         {
-            keyPressEvents[c] += e;
+            singleton.keyPressEvents[c] += e;
+            if (!singleton.keyCodes.Contains(c))
+                singleton.keyCodes.Add(c);
         }
 
-        public void SubscribeKeyRelease(KeyCode c, EmptyEventType e)
+        public static void SubscribeKeyRelease(KeyCode c, Action e)
         {
-            keyReleaseEvents[c] += e;
+            singleton.keyReleaseEvents[c] += e;
+            if (!singleton.keyCodes.Contains(c))
+                singleton.keyCodes.Add(c);
         }
 
-        public void UnSubscribeKeyPress(KeyCode c, EmptyEventType e)
+        public static void UnSubscribeKeyPress(KeyCode c, Action e)
         {
-            keyPressEvents[c] -= e;
+            singleton.keyPressEvents[c] -= e;
+            if (singleton.keyPressEvents[c] == null && singleton.keyReleaseEvents[c] == null)
+                singleton.keyCodes.Remove(c);
         }
 
-        public void UnSubscribeKeyRelease(KeyCode c, EmptyEventType e)
+        public static void UnSubscribeKeyRelease(KeyCode c, Action e)
         {
-            keyReleaseEvents[c] -= e;
+            singleton.keyReleaseEvents[c] -= e;
+            if (singleton.keyPressEvents[c] == null && singleton.keyReleaseEvents[c] == null)
+                singleton.keyCodes.Remove(c);
         }
 
         #endregion

@@ -4,14 +4,239 @@
         <name>QUnity</name>
     </assembly>
     <members>
-        <member name="M:QUnity.Movement.QGradualEllipticalMovement.#ctor(UnityEngine.GameObject,UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
+        <member name="T:QUnity.Movement.QGradualCircularMovement">
             <summary>
-            Initializes the elliptical movement as being a 90 degree rotation.
+            Defines a semi-circular gradual movement integrated into the Questry Gradual Movement System. 
+            </summary>
+        </member>
+        <member name="M:QUnity.Movement.QGradualCircularMovement.#ctor(UnityEngine.GameObject,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single,System.Boolean,System.Action{System.Boolean})">
+            <summary>
+            Initializes the circular movement
             </summary>
             <param name="gameObject"> The gameobject to be moved. </param>
-            <param name="startingPosition"> The starting position. If set to  </param>
-            <param name="finalPosition"></param>
-            <param name="time"></param>
+            <param name="startingPosition"> The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts. </param>
+            <param name="finalPosition"> The position the gameobject will be moving towards. This may not be the same as the starting point. </param>
+            <param name="time"> The time it shall take for the movement to finish. </param>
+            <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
+            <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
+            <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
+            <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
+        </member>
+        <member name="M:QUnity.Movement.QGradualCircularMovement.#ctor(UnityEngine.Rigidbody,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single,System.Boolean,System.Action{System.Boolean})">
+            <summary>
+            Initializes the circular movement
+            </summary>
+            <param name="rigidbody"> The gameobject to be moved. </param>
+            <param name="startingPosition"> The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts. </param>
+            <param name="finalPosition"> The position the gameobject will be moving towards. This may not be the same as the starting point. </param>
+            <param name="time"> The time it shall take for the movement to finish. </param>
+            <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
+            <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
+            <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
+            <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
+        </member>
+        <member name="M:QUnity.Movement.QGradualCircularMovement.StartMovement">
+            <summary>
+            Starts the defined movement if it has not already been started.
+            </summary>
+        </member>
+        <member name="P:QUnity.Movement.QGradualCircularMovement.MovementIsStacked">
+            <summary>
+            whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack.
+            </summary>
+        </member>
+        <member name="M:QUnity.Movement.QGradualCircularMovement.AttemptMerge(QUnity.Movement.QIGradualMovement)">
+            <summary>
+            Attempts to merge the input movement into this current movement. These are often implemented such that similar types of movement, and especially linear ones over similar times, can be handled as a single movement instead to increase performance.
+            </summary>
+            <param name="mov"> The movement to be merged. </param>
+            <returns> whether the input movement has been integrated into this movement. If true, this class is now responsible for adding the displacement of the other movement into itself. If false, the movement that has been attempted to be merged will be queued normally.</returns>
+        </member>
+        <member name="M:QUnity.Movement.QGradualCircularMovement.GetTimeLeft">
+            <summary>
+            Based on the time calls the manager has made, returns the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.
+            </summary>
+            <returns>the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity. Returns a negative value if there is no movement taking place currently</returns>
+        </member>
+        <member name="M:QUnity.Movement.QGradualCircularMovement.GetApplyTransformation(System.Single)">
+            <summary>
+            USED CHIEFLY BY THE MOVEMENT MANAGER. Returns the displacement of the object as affected by this gradual movement, while also keeping track of the time passed. If the gradual movement is done, returns negative infinity to signal so.
+            </summary>
+            <param name="time"> the time that has passed since the last frame. </param>
+            <returns> the displacement to take place within the frame. Negative infinity if the movement is done. </returns>
+        </member>
+        <member name="M:QUnity.Movement.QGradualCircularMovement.IsStacked">
+            <summary>
+            Returns whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack.
+            </summary>
+            <returns>true for stacked, false for not stacked.</returns>
+        </member>
+        <member name="M:QUnity.Movement.QGradualCircularMovement.OnMovementFinish(System.Boolean)">
+            <summary>
+            The function called by the manager when the movement has finished and been removed from the current movements of the assigned rigidbody/gameobject. The function will not be called when changing scenes, though the movements and their objects will nonetheless be removed.
+            </summary>
+            <param name="premature"> this will be true if the movement was marked as finished before the movement was completed, such as when the object is removed from movement. </param>
+        </member>
+        <member name="T:QUnity.Movement.QGradualFullCircularMovement">
+            <summary>
+            Does an entire circular movement, starting at a point and ending at it as well, but passing through a given point that comes 180 degrees after itself.
+            </summary>
+        </member>
+        <member name="T:QUnity.Movement.QGradualMovementManager">
+            <summary>
+            The main manager of all gradual movements that follows a singleton structure. All gradual movements and objects that are gradually moved reference this manager. If implementing your own gradual movement, you should make it work with this class.
+            </summary>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.DisableMovementEnumeration">
+            <summary>
+            Disables the movement enumerations, essentially pausing all gradual movements.
+            </summary>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.EnableMovementEnumeration">
+            <summary>
+            Enables the movement enumerations, essentially unpausing all gradual movements if the manager had been paused.
+            </summary>
+        </member>
+        <member name="T:QUnity.Movement.QGradualMovementManager.QGradualMovementProperties">
+            <summary>
+            A struct to define the properties that the gradual movement manager abides by.
+            </summary>
+        </member>
+        <member name="F:QUnity.Movement.QGradualMovementManager.QGradualMovementProperties.useFixedUpdate">
+            <summary>
+            determines whether the gradual movement manager should use fixed update or the regular update intervals.
+            </summary>
+        </member>
+        <member name="F:QUnity.Movement.QGradualMovementManager.QGradualMovementProperties.useRigidBodyMovement">
+            <summary>
+            For rigidbodies that are entered, uses the Rigidbody.MovePosition function when set to true rather than the rigidbody.position parameter.
+            </summary>
+        </member>
+        <member name="F:QUnity.Movement.QGradualMovementManager.QGradualMovementProperties.dontDestroyOnLoad">
+            <summary>
+            setting this to true will make it so that the gradual movement manager will not be destroyed when switching scenes, making it so that the properties are not lost (movement data from prior scene will be lost regardless.)
+            if you set this to false, it will be possible to have different managers for different scenes working with different properties. 
+            </summary>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.QGradualMovementProperties.#ctor(System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            instantiates a properties struct.
+            </summary>
+            <param name="useFixedUpdate"> determines whether the gradual movement manager should use fixed update or the regular update intervals.  </param>
+            <param name="useRigidBodyMovement">  For rigidbodies that are entered, uses the Rigidbody.MovePosition function when set to true rather than the rigidbody.position parameter. </param>
+            <param name="dontDestroyOnLoad">
+            setting this to true will make it so that the gradual movement manager will not be destroyed when switching scenes, making it so that the properties are not lost (movement data from prior scene will be lost regardless.)
+            if you set this to false, it will be possible to have different managers for different scenes working with different properties. 
+            </param>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.GetCurrentProperties">
+            <summary>
+            returns the current properties that the manager is abiding by.
+            </summary>
+            <returns> the current properties that the manager is abiding by. </returns>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.ChangeProperties(QUnity.Movement.QGradualMovementManager.QGradualMovementProperties)">
+            <summary>
+            Changes the properties that the manager is abiding by.
+            </summary>
+            <param name="newProperties"> the new properties struct </param>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.AddGradualMovement(UnityEngine.GameObject,QUnity.Movement.QIGradualMovement,System.Boolean,System.Boolean)">
+            <summary>
+            Adds a gameobject to be moved gradually.
+            </summary>
+            <param name="g"> the gameobject to be moved. </param>
+            <param name="movement"> the well-defined gradual movement </param>
+            <param name="stackWithCurrent"> if this is true and the passed movement is a stacking one, stacks the movement with the current movements being executed for the gameobject. If all movements added so far to the object is already stacked, this boolean will not matter.</param>
+            <param name="attemptMerge"> attempts to merge this movement with other ones for the object. Stacking and non-stacking movements will never be merged. Keep in mind that when this is checked, though it may potentially increase efficiency for the future, can also produce a process-intensive function-call. </param>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.AddGradualMovement(UnityEngine.Rigidbody,QUnity.Movement.QIGradualMovement,System.Boolean,System.Boolean)">
+            <summary>
+            Adds a gameobject to be moved gradually.
+            </summary>
+            <param name="rb"> the rigidbody to be moved. </param>
+            <param name="movement"> the well-defined gradual movement </param>
+            <param name="stackWithCurrent"> if this is true and the passed movement is a stacking one, stacks the movement with the current movements being executed for the gameobject. If all movements added so far to the object is already stacked, this boolean will not matter. </param>
+            <param name="attemptMerge"> attempts to merge this movement with other ones for the object. Stacking and non-stacking movements will never be merged. Keep in mind that when this is checked, though it may potentially increase efficiency for the future, can also produce a process-intensive function-call. </param>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.PauseGradualMovement(UnityEngine.GameObject,System.Boolean)">
+            <summary>
+            pauses or unpauses the gradual movement of the input gameobject.
+            </summary>
+            <param name="g">the input gameobject</param>
+            <param name="pause"> whether the gameobject should be paused or unpaused </param>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.PauseGradualMovement(UnityEngine.Rigidbody,System.Boolean)">
+            <summary>
+            pauses or unpauses the gradual movement of the input rigidbody.
+            </summary>
+            <param name="rb">the input rigidbody</param>
+            <param name="pause"> whether the rigidbody should be paused or unpaused </param>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.RemoveGradualMovement(UnityEngine.GameObject)">
+            <summary>
+            Removes the gameobject from the gradual movement manager, ending all movements and enqueued movements.
+            </summary>
+            <param name="g"> the gameobject whose movements are supposed to be removed. </param>
+            <returns> true if the object was removed, false if it didn't exist in the system in the first place. </returns>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.RemoveGradualMovement(UnityEngine.Rigidbody)">
+            <summary>
+            Removes the rigidbody from the gradual movement manager, ending all movements and enqueued movements.
+            </summary>
+            <param name="rb"> the rigidbody whose movements are supposed to be removed. </param>
+            <returns> true if the object was removed, false if it didn't exist in the system in the first place. </returns>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.RemoveCurrentGradualMovement(UnityEngine.GameObject,System.Boolean)">
+            <summary>
+            Removes the current gradual movement of the gameobject, moving to the next or group of movements removing the object from the system if there are no movements left.
+            </summary>
+            <param name="g"> the gameobject </param>
+            <param name="removeStacked"> if set to true, the stacked movements that are currently active will also be removed, preventing them from being carried over if they have not yet been completed. </param>
+        </member>
+        <member name="M:QUnity.Movement.QGradualMovementManager.RemoveCurrentGradualMovement(UnityEngine.Rigidbody,System.Boolean)">
+            <summary>
+            Removes the current gradual movement of the rigidbody, moving to the next group of movements or removing the object from the system if there are no movements left.
+            </summary>
+            <param name="rb"> the rigidbody </param>
+            <param name="removeStacked"> if set to true, the stacked movements that are currently active will also be removed, preventing them from being carried over if they have not yet been completed. </param>
+        </member>
+        <member name="T:QUnity.Movement.QIGradualMovement">
+            <summary>
+            The Gradual Movement interface that all gradual movements must implement.
+            </summary>
+        </member>
+        <member name="M:QUnity.Movement.QIGradualMovement.GetApplyTransformation(System.Single)">
+            <summary>
+            Returns the displacement of the object as affected by this gradual movement, while also keeping track of the time passed. If the gradual movement is done, returns negative infinity to signal so.
+            </summary>
+            <param name="time"> the time that has passed since the last frame. </param>
+            <returns> the displacement to take place within the frame. Negative infinity if the movement is done. </returns>
+        </member>
+        <member name="M:QUnity.Movement.QIGradualMovement.IsStacked">
+            <summary>
+            Returns whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack.
+            </summary>
+            <returns>true for stacked, false for not stacked.</returns>
+        </member>
+        <member name="M:QUnity.Movement.QIGradualMovement.OnMovementFinish(System.Boolean)">
+            <summary>
+            The function called by the manager when the movement has finished and been removed from the current movements of the assigned rigidbody/gameobject. The function will not be called when changing scenes, though the movements and their objects will nonetheless be removed.
+            </summary>
+            <param name="premature"> this will be true if the movement was marked as finished before the movement was completed, such as when the object is removed from movement. </param>
+        </member>
+        <member name="M:QUnity.Movement.QIGradualMovement.AttemptMerge(QUnity.Movement.QIGradualMovement)">
+            <summary>
+            Attempts to merge the input movement into this current movement. These are often implemented such that similar types of movement, and especially linear ones over similar times, can be handled as a single movement instead to increase performance.
+            </summary>
+            <param name="mov"> The movement to be merged. </param>
+            <returns> whether the input movement has been integrated into this movement. If true, this class is now responsible for adding the displacement of the other movement into itself. If false, the movement that has been attempted to be merged will be queued normally.</returns>
+        </member>
+        <member name="M:QUnity.Movement.QIGradualMovement.GetTimeLeft">
+            <summary>
+            Based on the time calls the manager has made, returns the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.
+            </summary>
+            <returns>the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.</returns>
         </member>
         <member name="M:QUnity.UI.QUIUtility.FadeDestroy(System.Object,System.Single,System.Single)">
             <summary>
@@ -170,6 +395,11 @@
             <param name="MaxWaitTime"> The maximum amount of time in seconds to be waited before the next song is played. Leave it as -1 if you want the
             default MusicManager value to be used.</param>
         </member>
+        <member name="T:QUnity.QVectorCalculations">
+            <summary>
+            A static class containing static functions for vector operations with Unity
+            </summary>
+        </member>
         <member name="M:QUnity.QVectorCalculations.Vector2WithinMargin(UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
             <summary>
             Assesses whether the two vectors are within the provided margin of each other. That is, whether their proximity is within the provided margin.
@@ -187,6 +417,40 @@
             <param name="v2">Second Vector provided</param>
             <param name="margin">The margin</param>
             <returns>true if the two vectors within each other's margin. False if otherwise</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector2MathfApproximately(UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            Uses the Mathf.Approximately function on the x and y coordiantes of 2D vectors to determine whether they are equal.
+            </summary>
+            <param name="v1">first vector</param>
+            <param name="v2">second vector</param>
+            <returns>true if the two vectors are approximately equal, false otherwise.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector3MathfApproximately(UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            Uses the Mathf.Approximately function on the x, y and z coordiantes of 3D vectors to determine whether they are equal.
+            </summary>
+            <param name="v1">first vector</param>
+            <param name="v2">second vector</param>
+            <returns>true if the two vectors are approximately equal, false otherwise.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector2InBetweenNaive(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            Returns whether p's x value is inbetween those of p1 and p2's x values and p's y value is inbetween those of p1 and p2's y values.
+            </summary>
+            <param name="p1"></param>
+            <param name="p2"></param>
+            <param name="p"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector2Colinear(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            Assesses whether all points defined as 2D vectors are colinear.
+            </summary>
+            <param name="anypoint"></param>
+            <param name="anypoint2"></param>
+            <param name="anypoint3"></param>
+            <returns></returns>
         </member>
         <member name="M:QUnity.QVectorCalculations.Vector2PassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
             <summary>
@@ -209,7 +473,7 @@
         </member>
         <member name="M:QUnity.QVectorCalculations.Vector2RayPassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
             <summary>
-            Assesses whether the ray passess the given point.
+            Assesses whether the ray passess the given point. Uses Mathf.Approximately() to test for equivalance 
             </summary>
             <param name="raystart"> The origin point of the ray.</param>
             <param name="direction"> The direction the ray follows.</param>
@@ -217,6 +481,62 @@
             <returns>True if the ray starts on or passess the specified point.</returns>
         </member>
         <member name="M:QUnity.QVectorCalculations.Vector2RayPassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
+            <summary>
+            Assesses whether the ray passess the given point within the specified margin. Uses Mathf.Approximately() to test for equivalance 
+            </summary>
+            <param name="raystart"> The origin point of the ray.</param>
+            <param name="direction"> The direction the ray follows.</param>
+            <param name="point"> The point being assessed.</param>
+            <param name="margin"> The margin.</param>
+            <returns>True if the two vectors are within the same margin of each other or the ray itself passess the point within the margin.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector3InBetweenNaive(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            Returns whether p's x value is inbetween those of p1 and p2's x values and p's y value is inbetween those of p1 and p2's y values.
+            </summary>
+            <param name="p1"></param>
+            <param name="p2"></param>
+            <param name="p"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector3Colinear(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            Assesses whether all points defined as 3D vectors are colinear.
+            </summary>
+            <param name="anypoint"></param>
+            <param name="anypoint2"></param>
+            <param name="anypoint3"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector3PassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            Assesses whether the specified vector, defined by a direction and any point on the vector, passess the specified point
+            </summary>
+            <param name="anypoint"> Any point along the vector</param>
+            <param name="direction"> The direction of the vector.</param>
+            <param name="point"> The point being assessed.</param>
+            <returns></returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector3PassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
+            <summary>
+            Assesses whether the specified vector, defined by a direction and any point on the vector, passess the specified point within the margin
+            </summary>
+            <param name="anypoint"> Any point along the vector</param>
+            <param name="direction"> The direction of the vector.</param>
+            <param name="point"> The point being assessed.</param>
+            <param name="margin"> The margin</param>
+            <returns></returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector3RayPassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            Assesses whether the ray passess the given point. Uses Mathf.Approximately() to test for equivalance
+            </summary>
+            <param name="raystart"> The origin point of the ray.</param>
+            <param name="direction"> The direction the ray follows.</param>
+            <param name="point"> The point being assessed.</param>
+            <returns>True if the ray starts on or passess the specified point.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.Vector3RayPassesPoint(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
             <summary>
             Assesses whether the ray passess the given point within the specified margin.
             </summary>
@@ -228,6 +548,58 @@
         </member>
         <member name="M:QUnity.QVectorCalculations.Vector2IsInBetweenTwoAcute(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
             <returns>true if the given between vector is within the acute angle formed between the first and second vectors.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.GetVector2Middle(UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            Returns the middle vector between v1 and v2.
+            </summary>
+            <param name="v1"></param>
+            <param name="v2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.GetVector3Middle(UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            Returns the middle vector between v1 and v2.
+            </summary>
+            <param name="v1"></param>
+            <param name="v2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.GetNearestPointOnLine(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            returns the nearest point on a given line to a given point.
+            </summary>
+            <param name="linePnt">any point given on the line, acting as the origin point.</param>
+            <param name="lineDir">unit vector in direction of line, either direction works</param>
+            <param name="pnt">the point to find nearest on line for</param>
+            <returns> the nearest point on a given line to a given point.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.GetNearestPointOnLine(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            returns the nearest point on a given line to a given point.
+            </summary>
+            <param name="linePnt">any point given on the line, acting as the origin point.</param>
+            <param name="lineDir">unit vector in direction of line, either direction works.</param>
+            <param name="pnt">the point to find nearest on line for.</param>
+            <returns> the nearest point on a given line to a given point.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.GetNearestPointOnFiniteLine(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            returns the nearest point on a given finite line to a given point.
+            </summary>
+            <param name="start">starting point of the line.</param>
+            <param name="end">end point of the line.</param>
+            <param name="pnt">the point to find nearest on line for.</param>
+            <returns>the nearest point on a given finite line to a given point.</returns>
+        </member>
+        <member name="M:QUnity.QVectorCalculations.GetNearestPointOnFiniteLine(UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
+            <summary>
+            returns the nearest point on a given finite line to a given point.
+            </summary>
+            <param name="start">starting point of the line.</param>
+            <param name="end">end point of the line.</param>
+            <param name="pnt">the point to find nearest on line for.</param>
+            <returns>the nearest point on a given finite line to a given point.</returns>
         </member>
     </members>
 </doc>
