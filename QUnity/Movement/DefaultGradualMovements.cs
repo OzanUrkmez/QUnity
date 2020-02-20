@@ -16,7 +16,7 @@ namespace QUnity.Movement
 
         private Vector3 initial, final, pivot;
         private float degree, xCoeff, yCoeff; //we make circles nao
-        private float movementTime, lastInputTime;
+        private float movementTime;
         private bool movementStacked;
         private float currentTime = -1;
         private GameObject movedObject;
@@ -38,7 +38,7 @@ namespace QUnity.Movement
         /// <param name="time"> The time it shall take for the movement to finish. </param>
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
-        /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be 10 and 180 </param>
+        /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
         public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree , float time, bool stacked, Action<bool> onMovementFinish = null)
         {
@@ -53,11 +53,12 @@ namespace QUnity.Movement
             final = finalPosition;
             pivot = referencePivot;
             movementTime = time;
-            lastInputTime = time;
             this.degree = degree;
             movementStacked = stacked;
 
             this.onMovementFinish = onMovementFinish;
+
+            degree = degree * Mathf.Deg2Rad;
         }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace QUnity.Movement
         /// <param name="time"> The time it shall take for the movement to finish. </param>
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
-        /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be 10 and 180 </param>
+        /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
         public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked, Action<bool> onMovementFinish = null)
         {
@@ -85,11 +86,13 @@ namespace QUnity.Movement
             final = finalPosition;
             pivot = referencePivot;
             movementTime = time;
-            lastInputTime = time;
             this.degree = degree;
             movementStacked = stacked;
 
             this.onMovementFinish = onMovementFinish;
+
+            degree = degree * Mathf.Deg2Rad;
+
         }
 
         #endregion
@@ -117,12 +120,14 @@ namespace QUnity.Movement
                 movedObject.transform.position = initial;
                 Vector3 middle = QVectorCalculations.GetVector3Middle(initial, final);
                 Vector3 dir = pivot - QVectorCalculations.GetNearestPointOnLine(middle, (final - initial), pivot);
-                Vector3 realPivot = dir * (final - initial).magnitude * Mathf.Pow(Mathf.Tan(Mathf.Deg2Rad * degree / 2), -1);
+                Vector3 realPivot = dir * (final - initial).magnitude * Mathf.Pow(Mathf.Tan(degree / 2), -1);
 
                 //construct circle.
                 v1 = (initial - realPivot).normalized * (initial - realPivot).magnitude;
                 v2 = (middle - QVectorCalculations.GetNearestPointOnLine(realPivot, v1, middle)).normalized * (initial - realPivot).magnitude;
                 pivot = realPivot;
+
+                currentTime = movementTime;
             }
         }
 
@@ -138,16 +143,16 @@ namespace QUnity.Movement
         /// <returns> whether the input movement has been integrated into this movement. If true, this class is now responsible for adding the displacement of the other movement into itself. If false, the movement that has been attempted to be merged will be queued normally.</returns>
         public bool AttemptMerge(QIGradualMovement mov)
         {
-            throw new NotImplementedException();
+            return false; //TODO AT LEAST IMPLEMENT SOME MERGES!
         }
 
         /// <summary>
         /// Based on the time calls the manager has made, returns the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.
         /// </summary>
-        /// <returns>the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.</returns>
+        /// <returns>the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity. Returns a negative value if there is no movement taking place currently</returns>
         public float GetTimeLeft()
         {
-            throw new NotImplementedException();
+            return currentTime;
         }
 
         /// <summary>
@@ -157,7 +162,13 @@ namespace QUnity.Movement
         /// <returns> the displacement to take place within the frame. Negative infinity if the movement is done. </returns>
         public Vector3 GetApplyTransformation(float time)
         {
-            throw new NotImplementedException();
+            if (currentTime <= 0)
+                return Vector3.negativeInfinity;
+            float timePass = currentTime - time < 0 ? 0 : currentTime - time;
+            Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) * degree)) + (v2 * Mathf.Sin((movementTime - timePass) * degree)) -
+                (v1 * Mathf.Cos((movementTime - currentTime) * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) * degree));
+            currentTime -= time;
+            return returned;
         }
 
         /// <summary>
