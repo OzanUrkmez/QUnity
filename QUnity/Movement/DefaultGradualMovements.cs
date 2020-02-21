@@ -116,8 +116,9 @@ namespace QUnity.Movement
                 //construct the real pivot.
                 movedObject.transform.position = initial;
                 Vector3 middle = QVectorCalculations.GetVector3Middle(initial, final);
-                Vector3 dir = pivot - QVectorCalculations.GetNearestPointOnLine(middle, (final - initial), pivot);
-                Vector3 realPivot = dir * (final - initial).magnitude * Mathf.Pow(Mathf.Tan(degree / 2), -1);
+                Vector3 nearest = QVectorCalculations.GetNearestPointOnLine(middle, (final - initial), pivot);
+                Vector3 dir = (pivot - nearest).normalized;
+                Vector3 realPivot = (dir * (final - initial).magnitude / 2 * Mathf.Pow(Mathf.Tan(degree / 2), -1)) + initial + (final - initial) / 2;
 
                 //construct circle.
                 v1 = (initial - realPivot).normalized * (initial - realPivot).magnitude;
@@ -167,6 +168,7 @@ namespace QUnity.Movement
             Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * degree)) -
                 ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * degree)));
             currentTime -= time;
+            Debug.Log(returned);
             return returned;
         }
 
