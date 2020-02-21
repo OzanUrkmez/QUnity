@@ -168,7 +168,6 @@ namespace QUnity.Movement
             Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * degree)) -
                 ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * degree)));
             currentTime -= time;
-            Debug.Log(returned);
             return returned;
         }
 
