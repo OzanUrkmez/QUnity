@@ -41,7 +41,7 @@ namespace QUnity.Movement
         /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
         /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree , float time, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null)
+        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null)
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
@@ -54,12 +54,10 @@ namespace QUnity.Movement
             final = finalPosition;
             pivot = referencePivot;
             movementTime = time;
-            this.degree = degree;
+            this.degree = degree * Mathf.Deg2Rad;
             movementStacked = stacked;
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
-
-            degree = degree * Mathf.Deg2Rad;
         }
 
         /// <summary>
@@ -88,13 +86,10 @@ namespace QUnity.Movement
             final = finalPosition;
             pivot = referencePivot;
             movementTime = time;
-            this.degree = degree;
+            this.degree = degree * Mathf.Deg2Rad;
             movementStacked = stacked;
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
-
-            degree = degree * Mathf.Deg2Rad;
-
         }
 
         #endregion
@@ -132,7 +127,7 @@ namespace QUnity.Movement
                 currentTime = movementTime;
 
                 QGradualMovementManager.AddGradualMovement(movedObject, this, movementStacked, attemptMerge);
-            } 
+            }
         }
 
         /// <summary>
@@ -169,8 +164,8 @@ namespace QUnity.Movement
             if (currentTime <= 0)
                 return Vector3.negativeInfinity;
             float timePass = currentTime - time < 0 ? 0 : currentTime - time;
-            Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) * degree)) + (v2 * Mathf.Sin((movementTime - timePass) * degree)) -
-                (v1 * Mathf.Cos((movementTime - currentTime) * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) * degree));
+            Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * degree)) -
+                (v1 * Mathf.Cos((movementTime - currentTime) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * degree));
             currentTime -= time;
             return returned;
         }
