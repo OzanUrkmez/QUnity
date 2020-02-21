@@ -51,6 +51,11 @@ namespace QUnity.Movement
             public Action<bool> onMovementFinish;
 
             /// <summary>
+            ///  Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. 
+            /// </summary>
+            public bool isWorldSpace;
+
+            /// <summary>
             /// Defines a circular movement.
             /// </summary>
             /// <param name="startingPosition"> The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts. </param>
@@ -60,8 +65,9 @@ namespace QUnity.Movement
             /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
             /// <param name="degree"> how many degrees of the constructed circle the movement will comprise. This value must be between 10 and 180 </param>
             /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
+            /// <param name="isWorldSpace">  Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. </param>
             /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-            public CircularMovementArgs(Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null)
+            public CircularMovementArgs(Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null)
             {
                 this.startingPosition = startingPosition;
                 this.finalPosition = finalPosition;
@@ -71,6 +77,7 @@ namespace QUnity.Movement
                 this.stacked = stacked;
                 this.attemptMerge = attemptMerge;
                 this.onMovementFinish = onMovementFinish;
+                this.isWorldSpace = isWorldSpace;
             }
         }
 
@@ -84,6 +91,7 @@ namespace QUnity.Movement
         private bool isRigidBodyMovement = false;
         private bool attemptMerge = false;
         private Action<bool> onMovementFinish;
+        private bool isWorldSpace;
 
         //TODO Ability to transform already created ellipsis for reuse? 
 
@@ -100,8 +108,9 @@ namespace QUnity.Movement
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
         /// <param name="degree"> how many degrees of the constructed circle the movement will comprise. This value must be between 10 and 180 </param>
         /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
+        /// <param name="isWorldSpace"> Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false,
+        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false,
             Action<bool> onMovementFinish = null)
         {
             if (degree < 10 || degree > 180)
@@ -121,6 +130,7 @@ namespace QUnity.Movement
             movementStacked = stacked;
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
+            this.isWorldSpace = isWorldSpace;
         }
 
         /// <summary>
@@ -148,6 +158,7 @@ namespace QUnity.Movement
             if (QVectorCalculations.Vector3Colinear(initial, initial, pivot))
                 throw new Exception("The reference pivot, starting position, and the final position cannot be colinear!");
             this.degree = degree * Mathf.Deg2Rad;
+            this.isWorldSpace = args.isWorldSpace;
         }
 
         /// <summary>
@@ -161,8 +172,9 @@ namespace QUnity.Movement
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
         /// <param name="degree"> how many degrees of the constructed circle the movement will comprise. This value must be between 10 and 180 </param>
         /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
+        /// <param name="isWorldSpace">  Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-        public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false,
+        public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false,
             Action<bool> onMovementFinish = null)
         {
             if (degree < 10 || degree > 180)
@@ -181,6 +193,7 @@ namespace QUnity.Movement
             movementStacked = stacked;
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
+            this.isWorldSpace = isWorldSpace;
         }
 
         /// <summary>
@@ -209,6 +222,7 @@ namespace QUnity.Movement
             if (QVectorCalculations.Vector3Colinear(initial, initial, pivot))
                 throw new Exception("The reference pivot, starting position, and the final position cannot be colinear!");
             this.degree = degree * Mathf.Deg2Rad;
+            this.isWorldSpace = args.isWorldSpace;
         }
 
 
@@ -309,6 +323,15 @@ namespace QUnity.Movement
         {
             if (onMovementFinish != null)
                 onMovementFinish(premature);
+        }
+
+        /// <summary>
+        /// Defines whether the transformations influenced by this movement is to be done in world space or local space.
+        /// </summary>
+        /// <returns> true if world space, false if local space </returns>
+        public bool IsWorldTranslation()
+        {
+            return isWorldSpace;
         }
 
         #endregion

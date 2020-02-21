@@ -827,6 +827,12 @@ namespace QUnity.Movement
         /// </summary>
         /// <returns>the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.</returns>
         float GetTimeLeft();
+
+        /// <summary>
+        /// Defines whether the transformations influenced by this movement is to be done in world space or local space.
+        /// </summary>
+        /// <returns> true if world space, false if local space </returns>
+        bool IsWorldTranslation();
     }
 }
 
