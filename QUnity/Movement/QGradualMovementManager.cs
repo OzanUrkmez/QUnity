@@ -124,7 +124,7 @@ namespace QUnity.Movement
                     foreach (QIGradualMovement qmov in mov.movements)
                     {
                         Vector3 trans = qmov.GetApplyTransformation(time);
-                        if (trans == Vector3.negativeInfinity)
+                        if (trans.x == Vector3.negativeInfinity.x)
                         {
                             //the movement is done! remove it handle logic and then continue.
                             toBeRemoved.Add(qmov);
@@ -174,7 +174,7 @@ namespace QUnity.Movement
                     foreach (QIGradualMovement qmov in mov.movements)
                     {
                         Vector3 trans = qmov.GetApplyTransformation(time);
-                        if (trans == Vector3.negativeInfinity)
+                        if (trans.x == Vector3.negativeInfinity.x)
                         {
                             //the movement is done! remove it handle logic and then continue.
                             toBeRemoved.Add(qmov);
