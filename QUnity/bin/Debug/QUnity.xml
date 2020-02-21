@@ -98,6 +98,7 @@
             <summary>
             Enables the movement enumerations, essentially unpausing all gradual movements if the manager had been paused.
             </summary>
+            <returns> true if the enumeration has been enabled, false if there already was an enumeration running or it has not yet been stopped, which can happen if disable and enable are called within the same frame. </returns>
         </member>
         <member name="T:QUnity.Movement.QGradualMovementManager.QGradualMovementProperties">
             <summary>
