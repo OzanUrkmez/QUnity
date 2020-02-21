@@ -14,6 +14,90 @@ namespace QUnity.Movement
     public class QGradualCircularMovement : QIGradualMovement
     {
 
+        [Serializable]
+        public struct CircularMovementArgs
+        {
+            /// <summary>
+            /// The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts.
+            /// </summary>
+            public Vector3 startingPosition;
+            /// <summary>
+            /// The position the gameobject will be moving towards. This may not be the same as the starting point.
+            /// </summary>
+            public Vector3 finalPosition;
+            /// <summary>
+            /// The time it shall take for the movement to finish.
+            /// </summary>
+            public float time;
+            /// <summary>
+            /// Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack.
+            /// </summary>
+            public bool stacked;
+            /// <summary>
+            /// The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS
+            /// </summary>
+            public Vector3 referencePivot;
+            /// <summary>
+            /// how many degrees of the constructed circle the movement will comprise. This value must be between 10 and 180
+            /// </summary>
+            public float degree;
+            /// <summary>
+            /// whether this movement should be tried to be merged with other movements.
+            /// </summary>
+            public bool attemptMerge;
+            /// <summary>
+            ///  A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes.
+            /// </summary>
+            public Action<bool> onMovementFinish;
+
+            /// <summary>
+            /// Defines variables that allow for further altering of the curve.
+            /// </summary>
+            public MovementSuperSpecifications superSpecifications;
+
+            /// <summary>
+            /// Defines a circular movement.
+            /// </summary>
+            /// <param name="startingPosition"> The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts. </param>
+            /// <param name="finalPosition"> The position the gameobject will be moving towards. This may not be the same as the starting point. </param>
+            /// <param name="time"> The time it shall take for the movement to finish. </param>
+            /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
+            /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
+            /// <param name="degree"> how many degrees of the constructed circle the movement will comprise. This value must be between 10 and 180 </param>
+            /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
+            /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
+            public CircularMovementArgs(Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null, MovementSuperSpecifications superSpecifications = new MovementSuperSpecifications())
+            {
+                this.startingPosition = startingPosition;
+                this.finalPosition = finalPosition;
+                this.referencePivot = referencePivot;
+                this.time = time;
+                this.degree = degree;
+                this.stacked = stacked;
+                this.attemptMerge = attemptMerge;
+                this.onMovementFinish = onMovementFinish;
+                this.superSpecifications = superSpecifications;
+            }
+            [Serializable]
+            public struct MovementSuperSpecifications
+            {
+                /// <summary>
+                /// the movements will be accentuated by this coefficient, potentially increasing, decreasing, or even inverting the curve.
+                /// </summary>
+                public float accentuation;
+
+                /// <summary>
+                ///  Defines variables that allow for further altering of the curve.
+                /// </summary>
+                /// <param name="accentuation">the movements will be accentuated by this coefficient, potentially increasing, decreasing, or even inverting the curve.</param>
+                public MovementSuperSpecifications(float accentuation = 1)
+                {
+                    this.accentuation = accentuation;
+
+                }
+            }
+        }
+
         private Vector3 initial, final, pivot;
         private float degree, xCoeff, yCoeff; //we make circles nao
         private float movementTime;
@@ -24,6 +108,8 @@ namespace QUnity.Movement
         private bool isRigidBodyMovement = false;
         private bool attemptMerge = false;
         private Action<bool> onMovementFinish;
+
+        private float accentuation = 1;
 
         //TODO Ability to transform already created ellipsis for reuse? 
 
@@ -38,10 +124,12 @@ namespace QUnity.Movement
         /// <param name="time"> The time it shall take for the movement to finish. </param>
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
-        /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
+        /// <param name="degree"> how many degrees of the constructed circle the movement will comprise. This value must be between 10 and 180 </param>
         /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null)
+        /// <param name="superSpecifications">  Defines variables that allow for further altering of the curve. </param>
+        public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false,
+            Action<bool> onMovementFinish = null, CircularMovementArgs.MovementSuperSpecifications superSpecifications = new CircularMovementArgs.MovementSuperSpecifications())
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
@@ -60,21 +148,53 @@ namespace QUnity.Movement
             movementStacked = stacked;
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
+            accentuation = superSpecifications.accentuation;
+        }
+
+        /// <summary>
+        /// Initializes the circular movement.
+        /// </summary>
+        /// <param name="gameObject">The gameobject to be moved.</param>
+        /// <param name="args">the arguments that define the movement.</param>
+        /// <param name="superSpecifications"> Defines variables that allow for further altering of the curve. </param>
+        public QGradualCircularMovement(GameObject gameObject, CircularMovementArgs args, CircularMovementArgs.MovementSuperSpecifications superSpecifications = new CircularMovementArgs.MovementSuperSpecifications())
+        {
+            movedObject = gameObject;
+            initial = args.startingPosition;
+            final = args.finalPosition;
+            pivot = args.referencePivot;
+            movementTime = args.time;
+            this.degree = args.degree;
+            movementStacked = args.stacked;
+            this.attemptMerge = args.attemptMerge;
+            this.onMovementFinish = args.onMovementFinish;
+            accentuation = superSpecifications.accentuation;
+            if (degree < 10 || degree > 180)
+                throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
+            else if (degree == 180)
+                degree = 179.99f;
+            if (QVectorCalculations.Vector3MathfApproximately(initial, final))
+                throw new Exception("The input starting and ending vectors cannot be the same!");
+            if (QVectorCalculations.Vector3Colinear(initial, initial, pivot))
+                throw new Exception("The reference pivot, starting position, and the final position cannot be colinear!");
+            this.degree = degree * Mathf.Deg2Rad;
         }
 
         /// <summary>
         /// Initializes the circular movement
         /// </summary>
-        /// <param name="rigidbody"> The gameobject to be moved. </param>
+        /// <param name="rigidbody"> The rigidbody to be moved. </param>
         /// <param name="startingPosition"> The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts. </param>
         /// <param name="finalPosition"> The position the gameobject will be moving towards. This may not be the same as the starting point. </param>
         /// <param name="time"> The time it shall take for the movement to finish. </param>
         /// <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
         /// <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
-        /// <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
+        /// <param name="degree"> how many degrees of the constructed circle the movement will comprise. This value must be between 10 and 180 </param>
         /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-        public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null)
+        /// <param name="superSpecifications">  Defines variables that allow for further altering of the curve. </param>
+        public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool stacked = false, bool attemptMerge = false,
+            Action<bool> onMovementFinish = null, CircularMovementArgs.MovementSuperSpecifications superSpecifications = new CircularMovementArgs.MovementSuperSpecifications())
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
@@ -92,7 +212,39 @@ namespace QUnity.Movement
             movementStacked = stacked;
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
+            accentuation = superSpecifications.accentuation;
         }
+
+        /// <summary>
+        /// Initializes the circular movement.
+        /// </summary>
+        /// <param name="rigidbody">The rigidbody to be moved.</param>
+        /// <param name="args">the arguments that define the movement.</param>
+        /// <param name="superSpecifications"> Defines variables that allow for further altering of the curve. </param>
+        public QGradualCircularMovement(Rigidbody rigidbody, CircularMovementArgs args, CircularMovementArgs.MovementSuperSpecifications superSpecifications = new CircularMovementArgs.MovementSuperSpecifications())
+        {
+            this.rigidbody = rigidbody;
+            isRigidBodyMovement = true;
+            initial = args.startingPosition;
+            final = args.finalPosition;
+            pivot = args.referencePivot;
+            movementTime = args.time;
+            this.degree = args.degree;
+            movementStacked = args.stacked;
+            this.attemptMerge = args.attemptMerge;
+            this.onMovementFinish = args.onMovementFinish;
+            accentuation = superSpecifications.accentuation;
+            if (degree < 10 || degree > 180)
+                throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
+            else if (degree == 180)
+                degree = 179.99f;
+            if (QVectorCalculations.Vector3MathfApproximately(initial, final))
+                throw new Exception("The input starting and ending vectors cannot be the same!");
+            if (QVectorCalculations.Vector3Colinear(initial, initial, pivot))
+                throw new Exception("The reference pivot, starting position, and the final position cannot be colinear!");
+            this.degree = degree * Mathf.Deg2Rad;
+        }
+
 
         #endregion
 
@@ -170,6 +322,7 @@ namespace QUnity.Movement
             Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * degree)) -
                 ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * degree)));
             currentTime -= time;
+            Debug.Log(returned);
             return returned;
         }
 
