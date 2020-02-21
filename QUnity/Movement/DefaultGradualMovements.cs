@@ -45,6 +45,8 @@ namespace QUnity.Movement
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
+            else if (degree == 180)
+                degree = 179.99f;
             if (QVectorCalculations.Vector3MathfApproximately(startingPosition, finalPosition))
                 throw new Exception("The input starting and ending vectors cannot be the same!");
             if (QVectorCalculations.Vector3Colinear(startingPosition, finalPosition, referencePivot))
