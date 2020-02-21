@@ -20,7 +20,6 @@ namespace QUnity.Movement
 
         private void Awake()
         {
-
             if (singleton != null)
             {
                 Destroy(gameObject);
@@ -82,8 +81,9 @@ namespace QUnity.Movement
         {
             if (enumerationRunning)
                 return false;
-            singleton.StartCoroutine(singleton.MovementEnumeration());
+            enumerationRunning = true;
             singleton.enumerationActive = true;
+            singleton.StartCoroutine(singleton.MovementEnumeration());
             return true;
         }
 
@@ -124,7 +124,7 @@ namespace QUnity.Movement
                     foreach (QIGradualMovement qmov in mov.movements)
                     {
                         Vector3 trans = qmov.GetApplyTransformation(time);
-                        if(trans == Vector3.negativeInfinity)
+                        if (trans == Vector3.negativeInfinity)
                         {
                             //the movement is done! remove it handle logic and then continue.
                             toBeRemoved.Add(qmov);
@@ -138,7 +138,7 @@ namespace QUnity.Movement
                     {
                         if (!mov.movements.Contains(qmov))
                             continue;
-                        if(qmov.IsStacked())
+                        if (qmov.IsStacked())
                         {
                             //just a stacked movement that has finished.
                             qmov.OnMovementFinish(false);
@@ -152,13 +152,13 @@ namespace QUnity.Movement
                             OnCurrentMovementEnd(g);
                         }
                     }
-                    if(mov.movements.Count == 0)
+                    if (mov.movements.Count == 0)
                     {
                         //movement of this object has completely finished.
                         objectsToBeRemoved.Add(g);
                     }
                 }
-                foreach(GameObject g in objectsToBeRemoved)
+                foreach (GameObject g in objectsToBeRemoved)
                 {
                     gradualMovements.Remove(g);
                     currentGradualMovements.Remove(g);
@@ -286,11 +286,12 @@ namespace QUnity.Movement
 
         private static void HandlePropertiesChange(QGradualMovementProperties oldProperties, QGradualMovementProperties newProperties)
         {
-            if(!oldProperties.dontDestroyOnLoad && newProperties.dontDestroyOnLoad)
+            if (!oldProperties.dontDestroyOnLoad && newProperties.dontDestroyOnLoad)
             {
                 //change to dont destroy on load.
                 DontDestroyOnLoad(singleton);
-            }else if(oldProperties.dontDestroyOnLoad && !newProperties.dontDestroyOnLoad)
+            }
+            else if (oldProperties.dontDestroyOnLoad && !newProperties.dontDestroyOnLoad)
             {
                 //change to DO destroy on load.
                 SceneManager.MoveGameObjectToScene(singleton.gameObject, SceneManager.GetActiveScene());
@@ -466,7 +467,7 @@ namespace QUnity.Movement
 
                                 if (traversedMovements[i].IsStacked())
                                     continue;
-                                else if(traversedMovements[i].AttemptMerge(movement))
+                                else if (traversedMovements[i].AttemptMerge(movement))
                                 {
                                     merged = true;
                                 }
@@ -478,7 +479,7 @@ namespace QUnity.Movement
                             }
                         }
                         //otherwise add it to the queue.
-                        
+
                         gradualMovements[g].Enqueue(movement);
                         currentGradualMovements[g].aggregateNonStacked++;
                     }
@@ -701,7 +702,7 @@ namespace QUnity.Movement
         {
             if (!gradualMovements.ContainsKey(g))
                 return false;
-            foreach(QIGradualMovement qgm in gradualMovements[g])
+            foreach (QIGradualMovement qgm in gradualMovements[g])
             {
                 qgm.OnMovementFinish(true);
             }
@@ -752,7 +753,7 @@ namespace QUnity.Movement
                 currentGradualMovements[g].movements.Clear();
                 foreach (QIGradualMovement qgm in currentGradualMovements[g].movements)
                 {
-                    if(qgm.IsStacked())
+                    if (qgm.IsStacked())
                         qgm.OnMovementFinish(true);
                 }
             }
@@ -827,7 +828,6 @@ namespace QUnity.Movement
         /// <returns>the amount of time left before the movement is done and the GetApplyTransformation function returns negative infinity.</returns>
         float GetTimeLeft();
     }
-
 }
 
 
