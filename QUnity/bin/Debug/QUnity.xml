@@ -9,7 +9,7 @@
             Defines a semi-circular gradual movement integrated into the Questry Gradual Movement System. 
             </summary>
         </member>
-        <member name="M:QUnity.Movement.QGradualCircularMovement.#ctor(UnityEngine.GameObject,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single,System.Boolean,System.Action{System.Boolean})">
+        <member name="M:QUnity.Movement.QGradualCircularMovement.#ctor(UnityEngine.GameObject,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single,System.Boolean,System.Boolean,System.Action{System.Boolean})">
             <summary>
             Initializes the circular movement
             </summary>
@@ -20,9 +20,10 @@
             <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
             <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
             <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
+            <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
             <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
         </member>
-        <member name="M:QUnity.Movement.QGradualCircularMovement.#ctor(UnityEngine.Rigidbody,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single,System.Boolean,System.Action{System.Boolean})">
+        <member name="M:QUnity.Movement.QGradualCircularMovement.#ctor(UnityEngine.Rigidbody,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single,System.Boolean,System.Boolean,System.Action{System.Boolean})">
             <summary>
             Initializes the circular movement
             </summary>
@@ -33,6 +34,7 @@
             <param name="stacked"> Defines whether the gradual movement should be stacked along with a series of movements; or only start when a series of movements has finished and define its own series of movements upon which other movements may stack. </param>
             <param name="referencePivot"> The reference point. The center of the circle will be between the line formed by the start and end points and a plane defined by this point. THIS POINT MAY NOT BE COLINEAR WITH THE START AND END POINTS </param>
             <param name="degree"> how many degrees of the circle the movement will comprise. This value must be between 10 and 180 </param>
+            <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
             <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
         </member>
         <member name="M:QUnity.Movement.QGradualCircularMovement.StartMovement">

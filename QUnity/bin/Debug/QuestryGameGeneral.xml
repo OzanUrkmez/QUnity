@@ -52,16 +52,6 @@
             <param name="number"> the number to be converted. </param>
             <returns> The LSB is represented by index 0. True is for 1 and false is for 0. </returns>
         </member>
-        <member name="T:QuestryGameGeneral.EventSystems.ActionEvent`1">
-            <summary>
-            A class that contains an event that accepts one attribute
-            </summary>
-        </member>
-        <member name="T:QuestryGameGeneral.EventSystems.EmptyEvent">
-            <summary>
-            This is a class that contains an event that neither returns nor accepts any values.
-            </summary>
-        </member>
         <member name="M:QuestryGameGeneral.PathFinding.DijkstraMap`1.AddNode(`0,System.Collections.Generic.List{QuestryGameGeneral.PathFinding.DijkstraMap{`0}.NodeLink})">
             <summary>
             Adds a node and its connections to the map. O(n) where n= size of connectedTo. Also creates nodes for nodes that are already connected to. If a distance is different then changes distance.

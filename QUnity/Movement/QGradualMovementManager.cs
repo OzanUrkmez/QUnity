@@ -53,6 +53,7 @@ namespace QUnity.Movement
             rigidGradualMovements = new Dictionary<Rigidbody, Queue<QIGradualMovement>>();
             currentGradualMovements = new Dictionary<GameObject, AggregateGradualMovement>();
             currentRigidGradualMovements = new Dictionary<Rigidbody, AggregateGradualMovement>();
+            EnableMovementEnumeration();
         }
 
         #endregion
@@ -76,15 +77,23 @@ namespace QUnity.Movement
         /// <summary>
         /// Enables the movement enumerations, essentially unpausing all gradual movements if the manager had been paused.
         /// </summary>
-        public static void EnableMovementEnumeration()
+        /// <returns> true if the enumeration has been enabled, false if there already was an enumeration running or it has not yet been stopped, which can happen if disable and enable are called within the same frame. </returns>
+        public static bool EnableMovementEnumeration()
         {
+            if (enumerationRunning)
+                return false;
+            singleton.StartCoroutine(singleton.MovementEnumeration());
             singleton.enumerationActive = true;
+            return true;
         }
+
         List<QIGradualMovement> toBeRemoved = new List<QIGradualMovement>();
         List<GameObject> objectsToBeRemoved = new List<GameObject>();
         List<Rigidbody> rigidbodiesToBeRemoved = new List<Rigidbody>();
+        private static bool enumerationRunning = false;
         private IEnumerator MovementEnumeration()
         {
+            enumerationRunning = true;
             while (enumerationActive)
             {
                 float time = 0f;
@@ -208,6 +217,7 @@ namespace QUnity.Movement
                     currentRigidGradualMovements.Remove(rb);
                 }
             }
+            enumerationRunning = false;
         }
 
 
