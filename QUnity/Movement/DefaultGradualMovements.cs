@@ -84,7 +84,7 @@ namespace QUnity.Movement
                 /// <summary>
                 /// the movements will be accentuated by this coefficient, potentially increasing, decreasing, or even inverting the curve.
                 /// </summary>
-                public float accentuation;
+                public float? accentuation;
 
                 /// <summary>
                 ///  Defines variables that allow for further altering of the curve.
@@ -148,7 +148,7 @@ namespace QUnity.Movement
             movementStacked = stacked;
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
-            accentuation = superSpecifications.accentuation;
+            accentuation = superSpecifications.accentuation ?? 1;
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace QUnity.Movement
             movementStacked = args.stacked;
             this.attemptMerge = args.attemptMerge;
             this.onMovementFinish = args.onMovementFinish;
-            accentuation = superSpecifications.accentuation;
+            accentuation = superSpecifications.accentuation ?? 1;
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
             else if (degree == 180)
@@ -212,7 +212,7 @@ namespace QUnity.Movement
             movementStacked = stacked;
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
-            accentuation = superSpecifications.accentuation;
+            accentuation = superSpecifications.accentuation ?? 1;
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace QUnity.Movement
             movementStacked = args.stacked;
             this.attemptMerge = args.attemptMerge;
             this.onMovementFinish = args.onMovementFinish;
-            accentuation = superSpecifications.accentuation;
+            accentuation = superSpecifications.accentuation ?? 1;
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
             else if (degree == 180)
@@ -319,8 +319,8 @@ namespace QUnity.Movement
             if (currentTime <= 0)
                 return Vector3.negativeInfinity;
             float timePass = currentTime - time < 0 ? 0 : currentTime - time;
-            Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * degree)) -
-                ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * degree)));
+            Vector3 returned = ((v1 * Mathf.Cos((movementTime - timePass) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * degree)) -
+                ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * degree)))) * accentuation;
             currentTime -= time;
             return returned;
         }
