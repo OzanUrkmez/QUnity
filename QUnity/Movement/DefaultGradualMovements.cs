@@ -588,11 +588,11 @@ namespace QUnity.Movement
             Vector3 middle = QVectorCalculations.GetVector3Middle(initial, final);
             Vector3 nearest = QVectorCalculations.GetNearestPointOnLine(middle, (final - initial), pivot);
             Vector3 dir = (pivot - nearest).normalized;
-            Vector3 realPivot = (dir * (final - initial).magnitude / 2 * Mathf.Pow(Mathf.Tan(2 * Mathf.PI / 2), -1)) + initial + (final - initial) / 2;
+            Vector3 realPivot = middle;
 
             //construct circle.
             v1 = (initial - realPivot).normalized * (initial - realPivot).magnitude;
-            v2 = (middle - QVectorCalculations.GetNearestPointOnLine(realPivot, v1, middle)).normalized * (initial - realPivot).magnitude;
+            v2 = dir * (initial - realPivot).magnitude;
             pivot = realPivot;
 
             currentTime = movementTime;
@@ -645,7 +645,7 @@ namespace QUnity.Movement
                 return Vector3.negativeInfinity;
             float timePass = currentTime - time < 0 ? 0 : currentTime - time;
             Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * 2 * Mathf.PI)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * 2 * Mathf.PI)) -
-                ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime *2 * Mathf.PI)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * 2 * Mathf.PI)));
+                ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime * 2 * Mathf.PI)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * 2 * Mathf.PI)));
             currentTime -= time;
             onFramePass?.Invoke(movedObject, rigidbody, returned);
             return returned;
