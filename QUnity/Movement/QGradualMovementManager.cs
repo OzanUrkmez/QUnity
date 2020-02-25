@@ -130,10 +130,17 @@ namespace QUnity.Movement
                             toBeRemoved.Add(qmov);
                             continue;
                         }
+                        if (!qmov.IsWorldTranslation())
+                        {
+                            trans = g.transform.rotation * trans;
+                            trans.x /= g.transform.lossyScale.x;
+                            trans.y /= g.transform.lossyScale.y;
+                            trans.z /= g.transform.lossyScale.z;
+                        }
                         currentAggregateTransformation += trans;
                     }
                     //do the transformation
-                    g.transform.Translate(currentAggregateTransformation);
+                    g.transform.Translate(currentAggregateTransformation, Space.World);
                     foreach (QIGradualMovement qmov in toBeRemoved)
                     {
                         if (!mov.movements.Contains(qmov))
@@ -179,6 +186,13 @@ namespace QUnity.Movement
                             //the movement is done! remove it handle logic and then continue.
                             toBeRemoved.Add(qmov);
                             continue;
+                        }
+                        if (!qmov.IsWorldTranslation())
+                        {
+                            trans = rb.transform.rotation * trans;
+                            trans.x /= rb.transform.lossyScale.x;
+                            trans.y /= rb.transform.lossyScale.y;
+                            trans.z /= rb.transform.lossyScale.z;
                         }
                         currentAggregateTransformation += trans;
                     }
