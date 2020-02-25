@@ -56,6 +56,11 @@ namespace QUnity.Movement
             public bool isWorldSpace;
 
             /// <summary>
+            /// A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody.
+            /// </summary>
+            public Action<GameObject, Rigidbody, Vector3> onFramePass;
+
+            /// <summary>
             /// Defines a circular movement.
             /// </summary>
             /// <param name="startingPosition"> The starting position. If set to any other position than that of the gameobject, the gameobject will be moved to that position when the movement starts. </param>
@@ -67,7 +72,9 @@ namespace QUnity.Movement
             /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
             /// <param name="isWorldSpace">  Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. </param>
             /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-            public CircularMovementArgs(Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false, Action<bool> onMovementFinish = null)
+            /// <param name="onFramePass"> A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody.</param>
+            public CircularMovementArgs(Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false,
+                Action<bool> onMovementFinish = null, Action<GameObject, Rigidbody, Vector3> onFramePass = null)
             {
                 this.startingPosition = startingPosition;
                 this.finalPosition = finalPosition;
@@ -78,6 +85,7 @@ namespace QUnity.Movement
                 this.attemptMerge = attemptMerge;
                 this.onMovementFinish = onMovementFinish;
                 this.isWorldSpace = isWorldSpace;
+                this.onFramePass = onFramePass;
             }
         }
 
@@ -92,6 +100,7 @@ namespace QUnity.Movement
         private bool attemptMerge = false;
         private Action<bool> onMovementFinish;
         private bool isWorldSpace;
+        private Action<GameObject, Rigidbody, Vector3> onFramePass;
 
         //TODO Ability to transform already created ellipsis for reuse? 
 
@@ -110,8 +119,9 @@ namespace QUnity.Movement
         /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
         /// <param name="isWorldSpace"> Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
+        /// <param name="onFramePass"> A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody.</param>
         public QGradualCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false,
-            Action<bool> onMovementFinish = null)
+            Action<bool> onMovementFinish = null, Action<GameObject, Rigidbody, Vector3> onFramePass = null)
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
@@ -131,6 +141,7 @@ namespace QUnity.Movement
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
             this.isWorldSpace = isWorldSpace;
+            this.onFramePass = onFramePass;
         }
 
         /// <summary>
@@ -159,6 +170,7 @@ namespace QUnity.Movement
                 throw new Exception("The reference pivot, starting position, and the final position cannot be colinear!");
             this.degree = degree * Mathf.Deg2Rad;
             this.isWorldSpace = args.isWorldSpace;
+            this.onFramePass = args.onFramePass;
         }
 
         /// <summary>
@@ -174,8 +186,9 @@ namespace QUnity.Movement
         /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
         /// <param name="isWorldSpace">  Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
+        /// <param name="onFramePass"> A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody.</param>
         public QGradualCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float degree, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false,
-            Action<bool> onMovementFinish = null)
+            Action<bool> onMovementFinish = null, Action<GameObject, Rigidbody, Vector3> onFramePass = null)
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
@@ -197,6 +210,7 @@ namespace QUnity.Movement
             this.onMovementFinish = onMovementFinish;
             this.isWorldSpace = isWorldSpace;
             movedObject = rigidbody.gameObject;
+            this.onFramePass = onFramePass;
         }
 
         /// <summary>
@@ -227,6 +241,7 @@ namespace QUnity.Movement
             this.degree = degree * Mathf.Deg2Rad;
             this.isWorldSpace = args.isWorldSpace;
             movedObject = rigidbody.gameObject;
+            this.onFramePass = args.onFramePass;
         }
 
 
@@ -308,6 +323,7 @@ namespace QUnity.Movement
             Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * degree)) -
                 ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * degree)));
             currentTime -= time;
+            onFramePass(movedObject, rigidbody, returned);
             return returned;
         }
 
