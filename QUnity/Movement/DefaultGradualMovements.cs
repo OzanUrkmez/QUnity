@@ -326,7 +326,7 @@ namespace QUnity.Movement
             Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * degree)) -
                 ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * degree)));
             currentTime -= time;
-            onFramePass(movedObject, rigidbody, returned);
+            onFramePass?.Invoke(movedObject, rigidbody, returned);
             return returned;
         }
 
@@ -647,7 +647,7 @@ namespace QUnity.Movement
             Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * 2 * Mathf.PI)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * 2 * Mathf.PI)) -
                 ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime *2 * Mathf.PI)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * 2 * Mathf.PI)));
             currentTime -= time;
-            onFramePass(movedObject, rigidbody, returned);
+            onFramePass?.Invoke(movedObject, rigidbody, returned);
             return returned;
         }
 
