@@ -14,6 +14,9 @@ namespace QUnity.Movement
     public class QGradualCircularMovement : QIGradualMovement
     {
 
+        /// <summary>
+        /// Defines all the parameters for a general gradual circular movement.
+        /// </summary>
         [Serializable]
         public struct CircularMovementArgs
         {
@@ -90,7 +93,7 @@ namespace QUnity.Movement
         }
 
         private Vector3 initial, final, pivot;
-        private float degree, xCoeff, yCoeff; //we make circles nao
+        private float degree; //we make circles nao
         private float movementTime;
         private bool movementStacked;
         private float currentTime = -1;
@@ -364,7 +367,7 @@ namespace QUnity.Movement
     /// </summary>
     public class QGradualFullCircularMovement
     {
-
+       
     }
 
 }
