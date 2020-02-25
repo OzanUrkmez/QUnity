@@ -179,6 +179,8 @@ namespace QUnity.Movement
         {
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
+            else if (degree == 180)
+                degree = 179.99f;
             if (QVectorCalculations.Vector3MathfApproximately(startingPosition, finalPosition))
                 throw new Exception("The input starting and ending vectors cannot be the same!");
             if (QVectorCalculations.Vector3Colinear(startingPosition, finalPosition, referencePivot))
@@ -194,6 +196,7 @@ namespace QUnity.Movement
             this.attemptMerge = attemptMerge;
             this.onMovementFinish = onMovementFinish;
             this.isWorldSpace = isWorldSpace;
+            movedObject = rigidbody.gameObject;
         }
 
         /// <summary>
@@ -215,7 +218,7 @@ namespace QUnity.Movement
             this.onMovementFinish = args.onMovementFinish;
             if (degree < 10 || degree > 180)
                 throw new Exception("The degree input into a gradual circular movement must be between 10 and 180.");
-            else if (degree == 180)
+            else if (args.degree == 180)
                 degree = 179.99f;
             if (QVectorCalculations.Vector3MathfApproximately(initial, final))
                 throw new Exception("The input starting and ending vectors cannot be the same!");
@@ -223,6 +226,7 @@ namespace QUnity.Movement
                 throw new Exception("The reference pivot, starting position, and the final position cannot be colinear!");
             this.degree = degree * Mathf.Deg2Rad;
             this.isWorldSpace = args.isWorldSpace;
+            movedObject = rigidbody.gameObject;
         }
 
 
@@ -240,27 +244,29 @@ namespace QUnity.Movement
         {
             if (currentTime > 0)
                 return;
+            //construct the real pivot.
+            movedObject.transform.position = initial;
+            Vector3 middle = QVectorCalculations.GetVector3Middle(initial, final);
+            Vector3 nearest = QVectorCalculations.GetNearestPointOnLine(middle, (final - initial), pivot);
+            Vector3 dir = (pivot - nearest).normalized;
+            Vector3 realPivot = (dir * (final - initial).magnitude / 2 * Mathf.Pow(Mathf.Tan(degree / 2), -1)) + initial + (final - initial) / 2;
+
+            //construct circle.
+            v1 = (initial - realPivot).normalized * (initial - realPivot).magnitude;
+            v2 = (middle - QVectorCalculations.GetNearestPointOnLine(realPivot, v1, middle)).normalized * (initial - realPivot).magnitude;
+            pivot = realPivot;
+
+            currentTime = movementTime;
+
+            //do the movement
             if (isRigidBodyMovement)
             {
                 //rigidbody movement
+                QGradualMovementManager.AddGradualMovement(rigidbody, this, movementStacked, attemptMerge);
             }
             else
             {
                 //regular movement.
-                //construct the real pivot.
-                movedObject.transform.position = initial;
-                Vector3 middle = QVectorCalculations.GetVector3Middle(initial, final);
-                Vector3 nearest = QVectorCalculations.GetNearestPointOnLine(middle, (final - initial), pivot);
-                Vector3 dir = (pivot - nearest).normalized;
-                Vector3 realPivot = (dir * (final - initial).magnitude / 2 * Mathf.Pow(Mathf.Tan(degree / 2), -1)) + initial + (final - initial) / 2;
-
-                //construct circle.
-                v1 = (initial - realPivot).normalized * (initial - realPivot).magnitude;
-                v2 = (middle - QVectorCalculations.GetNearestPointOnLine(realPivot, v1, middle)).normalized * (initial - realPivot).magnitude;
-                pivot = realPivot;
-
-                currentTime = movementTime;
-
                 QGradualMovementManager.AddGradualMovement(movedObject, this, movementStacked, attemptMerge);
             }
         }
@@ -302,7 +308,6 @@ namespace QUnity.Movement
             Vector3 returned = (v1 * Mathf.Cos((movementTime - timePass) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - timePass) / movementTime * degree)) -
                 ((v1 * Mathf.Cos((movementTime - currentTime) / movementTime * degree)) + (v2 * Mathf.Sin((movementTime - currentTime) / movementTime * degree)));
             currentTime -= time;
-            Debug.Log(returned);
             return returned;
         }
 
@@ -337,7 +342,6 @@ namespace QUnity.Movement
         #endregion
 
     }
-
 
     /// <summary>
     /// Does an entire circular movement, starting at a point and ending at it as well, but passing through a given point that comes 180 degrees after itself.
