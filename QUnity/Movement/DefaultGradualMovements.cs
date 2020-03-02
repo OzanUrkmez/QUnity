@@ -408,7 +408,7 @@ namespace QUnity.Movement
             public bool isWorldSpace;
 
             /// <summary>
-            /// A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody.
+            ///A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody. The gameobject passed is the gameobject being moved, whereas the Vector3 that is passed is the displacement that took place in this particular frame.
             /// </summary>
             public Action<GameObject, Rigidbody, Vector3> onFramePass;
 
@@ -423,7 +423,7 @@ namespace QUnity.Movement
             /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
             /// <param name="isWorldSpace">  Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. </param>
             /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-            /// <param name="onFramePass"> A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody.</param>
+            /// <param name="onFramePass"> A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody. The gameobject passed is the gameobject being moved, whereas the Vector3 that is passed is the displacement that took place in this particular frame.</param>
             public CircularMovementArgs(Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false,
                 Action<bool> onMovementFinish = null, Action<GameObject, Rigidbody, Vector3> onFramePass = null)
             {
@@ -467,7 +467,7 @@ namespace QUnity.Movement
         /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
         /// <param name="isWorldSpace"> Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-        /// <param name="onFramePass"> A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody.</param>
+        /// <param name="onFramePass">A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody. The gameobject passed is the gameobject being moved, whereas the Vector3 that is passed is the displacement that took place in this particular frame.</param>
         public QGradualFullCircularMovement(GameObject gameObject, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false,
             Action<bool> onMovementFinish = null, Action<GameObject, Rigidbody, Vector3> onFramePass = null)
         {
@@ -522,7 +522,7 @@ namespace QUnity.Movement
         /// <param name="attemptMerge"> whether this movement should be tried to be merged with other movements. </param>
         /// <param name="isWorldSpace">  Defines whether the transformations influenced by this movement is to be done in world space or local space. Very different movements may thus be achieved. </param>
         /// <param name="onMovementFinish"> A function that is called when the movement finished, with the boolean indicating whether the movement finished or not. This function will not be called in scene changes. </param>
-        /// <param name="onFramePass"> A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody.</param>
+        /// <param name="onFramePass"> A function that is called each frame a movement takes place. The rigidbody passed in will be null if the object is not a rigidbody. The gameobject passed is the gameobject being moved, whereas the Vector3 that is passed is the displacement that took place in this particular frame.</param>
         public QGradualFullCircularMovement(Rigidbody rigidbody, Vector3 startingPosition, Vector3 finalPosition, Vector3 referencePivot, float time, bool isWorldSpace = true, bool stacked = false, bool attemptMerge = false,
             Action<bool> onMovementFinish = null, Action<GameObject, Rigidbody, Vector3> onFramePass = null)
         {
