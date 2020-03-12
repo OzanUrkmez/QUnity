@@ -364,6 +364,28 @@ namespace QUnity
             return (returned > 0) ? 360f - returned : -returned;
         }
 
+        /// <summary>
+        /// Makes sure that the rotation is between 180 and -180 degrees.
+        /// </summary>
+        /// <param name="rotation"> the rotation that represents the change between two rotations that is supposed to be minimized. </param>
+        /// <returns></returns>
+        public static Vector3 MinimizeEulerAngleChange(Vector3 rotation)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                rotation[i] %= 360;
+                if (rotation[i] > 180)
+                {
+                    rotation[i] -= 360;
+                }
+                else if (rotation[i] < -180)
+                {
+                    rotation[i] += 360;
+                }
+            }
+            return rotation;
+        }
+
         #endregion
 
         #region Misc Checks
