@@ -57,10 +57,6 @@ namespace QUnity.Movement
 
         #endregion
 
-        #region 
-
-        #endregion
-
         #region Enumeration and Activeness
 
         private bool enumerationActive = false;
