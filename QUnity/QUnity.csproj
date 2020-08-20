@@ -85,6 +85,7 @@
     <Compile Include="Movement\QGradualMovementManager.cs" />
     <Compile Include="UI\Layout Groups\QLayoutElementMinUpToAMaxSetter.cs" />
     <Compile Include="UI\QUIUtility.cs" />
+    <Compile Include="Utility\QEditorUtility.cs" />
     <Compile Include="Utility\QGeneralUtility.cs" />
     <Compile Include="Utility\QKeyboardInputHandler.cs" />
     <Compile Include="Utility\QMusicManager.cs" />

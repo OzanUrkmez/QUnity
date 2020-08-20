@@ -541,6 +541,38 @@
             </summary>
             <param name="field"> The input field to be refreshed. </param>
         </member>
+        <member name="M:QUnity.Utility.QEditorUtility.UpdateTagManager(UnityEditor.SerializedObject)">
+            <summary>
+            updates the tag manager object held in memory by this class.
+            </summary>
+            <param name="tagManager">new tag manager object.</param>
+        </member>
+        <member name="M:QUnity.Utility.QEditorUtility.AddTag(UnityEditor.SerializedObject,System.String)">
+            <summary>
+            Adds a tag to the current Unity Editor instance if it doesn't already exist. Also updates the current tag manager through UpdateManager function
+            </summary>
+            <param name="tagManager"> The tag manager. can usually be got through AssetDatabase.LoadAllAssetsAtPath() function. This object will be saved for future use. </param>
+            <param name="newTag">the tag to be added.</param>
+        </member>
+        <member name="M:QUnity.Utility.QEditorUtility.AddTag(System.String)">
+            <summary>
+            Adds a tag to the current Unity Editor Instance if it doesn't already exist.
+            </summary>
+            <param name="newTag">the tag to be added.</param>
+        </member>
+        <member name="M:QUnity.Utility.QEditorUtility.AddTag(System.String[])">
+            <summary>
+            Adds multiple tags to the current Unity Editor instance. Only does so for those that are not already added. Also updates the current tag manager through UpdateManager function
+            </summary>
+            <param name="newTag">the tags to be added.</param>
+        </member>
+        <member name="M:QUnity.Utility.QEditorUtility.AddTag(UnityEditor.SerializedObject,System.String[])">
+            <summary>
+            Adds multiple tags to the current Unity Editor instance. Only does so for those that are not already added. Also updates the current tag manager through UpdateManager function
+            </summary>
+            <param name="tagManager"> The tag manager. can usually be got through AssetDatabase.LoadAllAssetsAtPath() function. This object will be saved for future use. </param>
+            <param name="newTag">the tags to be added.</param>
+        </member>
         <member name="T:QUnity.Utility.QKeyboardInputHandler">
             <summary>
             A class for handling keyboard input
