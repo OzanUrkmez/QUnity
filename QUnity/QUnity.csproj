@@ -86,7 +86,8 @@
     <Compile Include="UI\Layout Groups\QLayoutElementMinUpToAMaxSetter.cs" />
     <Compile Include="UI\QUIUtility.cs" />
     <Compile Include="Utility\QEditorUtility.cs" />
-    <Compile Include="Utility\QGeneralUtility.cs" />
+    <Compile Include="Utility\QEvents.cs" />
+    <Compile Include="Utility\QManager.cs" />
     <Compile Include="Utility\QKeyboardInputHandler.cs" />
     <Compile Include="Utility\QMusicManager.cs" />
     <Compile Include="Utility\QVectorCalculations.cs" />
