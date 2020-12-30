@@ -682,4 +682,39 @@ namespace QUnity.Movement
         #endregion
     }
 
+    //TODO better organization. base abstract class etc maybe. also start movement should be part of interface. redundant repeated code should not be redundant nor repeated.
+
+    public class QGradualLinearMovement : QIGradualMovement
+    {
+        public bool AttemptMerge(QIGradualMovement mov)
+        {
+            return false;
+        }
+
+        public Vector3 GetApplyTransformation(float time)
+        {
+            throw new NotImplementedException();
+        }
+
+        public float GetTimeLeft()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsStacked()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsWorldTranslation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnMovementFinish(bool premature)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 }
